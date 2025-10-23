@@ -3,15 +3,6 @@ name: Create Release Tag
 on:
   workflow_dispatch:
     inputs:
-      release_type:
-        description: 'Type of release'
-        required: true
-        default: 'major'
-        type: choice
-        options:
-        - major
-        - minor
-        - patch
       tag_message:
         description: 'Tag message (optional)'
         required: false
@@ -49,24 +40,12 @@ jobs:
         # Parse version components
         IFS='.' read -r major minor patch <<< "$current_version"
         
-        release_type="${{ github.event.inputs.release_type }}"
-        echo "Release type: $release_type"
+        echo "Creating major release - incrementing major version and resetting minor/patch to 0"
         
-        # Increment version based on type
-        case $release_type in
-          major)
-            major=$((major + 1))
-            minor=0
-            patch=0
-            ;;
-          minor)
-            minor=$((minor + 1))
-            patch=0
-            ;;
-          patch)
-            patch=$((patch + 1))
-            ;;
-        esac
+        # Increment major version and reset minor/patch to 0
+        major=$((major + 1))
+        minor=0
+        patch=0
         
         new_version="$major.$minor.$patch"
         echo "New version: $new_version"
@@ -76,7 +55,7 @@ jobs:
     - name: Commit version update
       run: |
         git add version.txt
-        git commit -m "Release version ${{ steps.new_version.outputs.version }} [${{ github.event.inputs.release_type }}]"
+        git commit -m "Release version ${{ steps.new_version.outputs.version }} [major]"
         git push origin main
 
     - name: Create release tag
@@ -100,4 +79,4 @@ jobs:
         echo "🎉 Release tag created successfully!"
         echo "📋 New version: ${{ steps.new_version.outputs.version }}"
         echo "🏷️ Tag: v${{ steps.new_version.outputs.version }}"
-        echo "📝 Type: ${{ github.event.inputs.release_type }}"
+        echo "📝 Type: major (incremented major version, reset minor/patch to 0)"
