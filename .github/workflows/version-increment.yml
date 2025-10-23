@@ -4,18 +4,6 @@ on:
   push:
     branches: 
       - '**'  # Trigger on all branches
-    paths-ignore:
-      - 'version.txt'  # Prevent infinite loops when version.txt is updated
-  pull_request:
-    branches: [ main ]
-    types: [ closed ]
-
-name: Auto Version Increment
-
-on:
-  push:
-    branches: 
-      - '**'  # Trigger on all branches
     tags:
       - '**'  # Trigger on all tags
     paths-ignore:
