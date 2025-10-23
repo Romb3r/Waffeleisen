@@ -2,8 +2,7 @@ name: Auto Version Increment
 
 on:
   push:
-    branches: 
-      - '**'  # Trigger on all branches
+    branches: [ main ]
     paths-ignore:
       - 'version.txt'  # Prevent infinite loops when version.txt is updated
   pull_request:
@@ -13,8 +12,8 @@ on:
 jobs:
   increment-version:
     runs-on: ubuntu-latest
-    # Only run on pushes or merged PRs
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    # Only run on pushes to main or merged PRs into main
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     
     steps:
     - name: Checkout code
@@ -22,6 +21,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
+        ref: main  # Always checkout main branch
 
     - name: Configure Git
       run: |
@@ -34,20 +34,16 @@ jobs:
         if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.merged }}" == "true" ]; then
           # PR merged into main - increment minor version
           echo "increment_type=minor" >> $GITHUB_OUTPUT
-          echo "reason=PR merged into main" >> $GITHUB_OUTPUT
-        elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
-          # Direct push to main - increment minor version
-          echo "increment_type=minor" >> $GITHUB_OUTPUT
-          echo "reason=Direct push to main" >> $GITHUB_OUTPUT
+          echo "reason=PR #${{ github.event.pull_request.number }} merged into main" >> $GITHUB_OUTPUT
         else
-          # Push to any other branch - increment patch version
+          # Direct push to main - increment patch version
           echo "increment_type=patch" >> $GITHUB_OUTPUT
-          echo "reason=Push to branch ${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          echo "reason=Direct push to main" >> $GITHUB_OUTPUT
         fi
 
     - name: Increment version
       run: |
-        # Read current version
+        # Read current version from main branch
         if [ -f version.txt ]; then
           current_version=$(cat version.txt)
           echo "Current version: $current_version"
@@ -90,18 +86,11 @@ jobs:
           exit 0
         fi
         
-        # Determine which branch to push to
-        if [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.ref }}" == "refs/heads/main" ]; then
-          target_branch="main"
-        else
-          target_branch="${{ github.ref_name }}"
-        fi
-        
         # Add and commit the version file
         git add version.txt
         git commit -m "Auto-increment version to $(cat version.txt) [${{ steps.version_type.outputs.increment_type }}] [skip ci]"
         
-        # Push the changes
-        git push origin "$target_branch"
+        # Push the changes to main
+        git push origin main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
