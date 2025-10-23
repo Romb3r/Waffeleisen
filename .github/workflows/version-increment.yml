@@ -4,11 +4,16 @@ on:
   push:
     branches: 
       - '**'  # Trigger on all branches
+    tags:
+      - '**'  # Trigger on all tags
     paths-ignore:
       - 'version.txt'  # Prevent infinite loops when version.txt is updated
   pull_request:
     branches: [ main ]
     types: [ closed ]
+  create:
+    tags:
+      - '**'  # Trigger when tags are created
 
 jobs:
   increment-version:
@@ -29,41 +34,40 @@ jobs:
     - name: Determine version increment type and action
       id: version_type
       run: |
-        if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.merged }}" == "true" ]; then
-          # PR merged into main - increment minor version
+        if [ "${{ github.ref_type }}" == "tag" ]; then
+          # Tag created - increment major version
+          echo "increment_type=major" >> $GITHUB_OUTPUT
+          echo "should_increment=true" >> $GITHUB_OUTPUT
+          echo "target_branch=main" >> $GITHUB_OUTPUT
+          echo "reason=Tag ${{ github.ref_name }} created - incrementing major version" >> $GITHUB_OUTPUT
+        elif [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.merged }}" == "true" ]; then
+          # PR merged into main - increment minor version, reset patch to 0
           echo "increment_type=minor" >> $GITHUB_OUTPUT
           echo "should_increment=true" >> $GITHUB_OUTPUT
+          echo "target_branch=main" >> $GITHUB_OUTPUT
           echo "reason=PR #${{ github.event.pull_request.number }} merged into main" >> $GITHUB_OUTPUT
         elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
-          # Direct push to main - increment minor version
+          # Direct push to main - increment minor version, reset patch to 0
           echo "increment_type=minor" >> $GITHUB_OUTPUT
           echo "should_increment=true" >> $GITHUB_OUTPUT
+          echo "target_branch=main" >> $GITHUB_OUTPUT
           echo "reason=Direct push to main" >> $GITHUB_OUTPUT
         else
-          # Push to feature branch - don't increment, just log
+          # Push to feature branch - increment patch version
           echo "increment_type=patch" >> $GITHUB_OUTPUT
-          echo "should_increment=false" >> $GITHUB_OUTPUT
-          echo "reason=Push to branch ${{ github.ref_name }} (version will be incremented when merged to main)" >> $GITHUB_OUTPUT
+          echo "should_increment=true" >> $GITHUB_OUTPUT
+          echo "target_branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          echo "reason=Push to branch ${{ github.ref_name }}" >> $GITHUB_OUTPUT
         fi
 
-    - name: Show version status
+    - name: Get current version
+      id: current_version
       run: |
-        echo "Branch: ${{ github.ref_name }}"
-        echo "Event: ${{ github.event_name }}"
-        echo "Action: ${{ steps.version_type.outputs.reason }}"
-        echo "Will increment version: ${{ steps.version_type.outputs.should_increment }}"
+        # For tag events and main branch operations, get version from main
+        if [ "${{ steps.version_type.outputs.target_branch }}" == "main" ] || [ "${{ github.ref_type }}" == "tag" ]; then
+          git checkout main
+        fi
         
-        if [ -f version.txt ]; then
-          current_version=$(cat version.txt)
-          echo "Current version: $current_version"
-        else
-          echo "No version.txt found"
-        fi
-
-    - name: Increment version
-      if: steps.version_type.outputs.should_increment == 'true'
-      run: |
-        # Read current version
         if [ -f version.txt ]; then
           current_version=$(cat version.txt)
           echo "Current version: $current_version"
@@ -71,6 +75,23 @@ jobs:
           current_version="1.0.0"
           echo "No version.txt found, starting with: $current_version"
         fi
+        echo "version=$current_version" >> $GITHUB_OUTPUT
+
+    - name: Show version status
+      run: |
+        echo "Branch: ${{ github.ref_name }}"
+        echo "Event: ${{ github.event_name }}"
+        echo "Ref type: ${{ github.ref_type }}"
+        echo "Action: ${{ steps.version_type.outputs.reason }}"
+        echo "Will increment: ${{ steps.version_type.outputs.increment_type }}"
+        echo "Target branch: ${{ steps.version_type.outputs.target_branch }}"
+        echo "Current version: ${{ steps.current_version.outputs.version }}"
+
+    - name: Increment version
+      if: steps.version_type.outputs.should_increment == 'true'
+      id: new_version
+      run: |
+        current_version="${{ steps.current_version.outputs.version }}"
         
         # Parse version components (assuming semantic versioning: major.minor.patch)
         IFS='.' read -r major minor patch <<< "$current_version"
@@ -89,7 +110,7 @@ jobs:
             minor=$((minor + 1))
             patch=0
             ;;
-          patch|*)
+          patch)
             patch=$((patch + 1))
             ;;
         esac
@@ -97,6 +118,7 @@ jobs:
         new_version="$major.$minor.$patch"
         echo "New version: $new_version"
         echo "$new_version" > version.txt
+        echo "version=$new_version" >> $GITHUB_OUTPUT
 
     - name: Commit and push changes
       if: steps.version_type.outputs.should_increment == 'true'
@@ -107,11 +129,17 @@ jobs:
           exit 0
         fi
         
+        target_branch="${{ steps.version_type.outputs.target_branch }}"
+        new_version="${{ steps.new_version.outputs.version }}"
+        increment_type="${{ steps.version_type.outputs.increment_type }}"
+        
         # Add and commit the version file
         git add version.txt
-        git commit -m "Auto-increment version to $(cat version.txt) [${{ steps.version_type.outputs.increment_type }}] [skip ci]"
+        git commit -m "Auto-increment version to $new_version [$increment_type] [skip ci]"
         
-        # Push the changes to main
-        git push origin main
+        # Push the changes to the appropriate branch
+        git push origin "$target_branch"
+        
+        echo "Version incremented to $new_version on branch $target_branch"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
