@@ -20,6 +20,21 @@ This repository implements a comprehensive semantic versioning strategy:
 - The current version is stored in `version.txt`
 - Version updates are committed automatically with the message pattern: `Auto-increment version to X.Y.Z [major/minor/patch] [skip ci]`
 
+### Tag Creation Options
+
+**Option 1: Automatic Tag Creation**
+When you create any tag, the workflow will:
+1. Increment the major version 
+2. Create a new properly versioned tag (e.g., `v2.0.0`)
+3. Keep your original tag as well
+
+**Option 2: Manual Release Workflow** (Recommended)
+Use the "Create Release Tag" workflow in GitHub Actions:
+1. Go to Actions → "Create Release Tag" → "Run workflow"
+2. Choose release type (major/minor/patch)
+3. Add optional tag message
+4. Creates properly versioned tag with updated code
+
 ### Current Version
 
 The current version can be found in `version.txt`.

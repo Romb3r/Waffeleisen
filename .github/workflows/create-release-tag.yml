@@ -1,0 +1,103 @@
+name: Create Release Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Type of release'
+        required: true
+        default: 'major'
+        type: choice
+        options:
+        - major
+        - minor
+        - patch
+      tag_message:
+        description: 'Tag message (optional)'
+        required: false
+        default: 'Release version'
+
+jobs:
+  create-release-tag:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+        ref: main
+
+    - name: Configure Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Calculate new version
+      id: new_version
+      run: |
+        # Read current version
+        if [ -f version.txt ]; then
+          current_version=$(cat version.txt)
+          echo "Current version: $current_version"
+        else
+          current_version="1.0.0"
+          echo "No version.txt found, starting with: $current_version"
+        fi
+        
+        # Parse version components
+        IFS='.' read -r major minor patch <<< "$current_version"
+        
+        release_type="${{ github.event.inputs.release_type }}"
+        echo "Release type: $release_type"
+        
+        # Increment version based on type
+        case $release_type in
+          major)
+            major=$((major + 1))
+            minor=0
+            patch=0
+            ;;
+          minor)
+            minor=$((minor + 1))
+            patch=0
+            ;;
+          patch)
+            patch=$((patch + 1))
+            ;;
+        esac
+        
+        new_version="$major.$minor.$patch"
+        echo "New version: $new_version"
+        echo "$new_version" > version.txt
+        echo "version=$new_version" >> $GITHUB_OUTPUT
+
+    - name: Commit version update
+      run: |
+        git add version.txt
+        git commit -m "Release version ${{ steps.new_version.outputs.version }} [${{ github.event.inputs.release_type }}]"
+        git push origin main
+
+    - name: Create release tag
+      run: |
+        new_version="${{ steps.new_version.outputs.version }}"
+        tag_message="${{ github.event.inputs.tag_message }}"
+        
+        if [ -z "$tag_message" ]; then
+          tag_message="Release version $new_version"
+        fi
+        
+        git tag -a "v$new_version" -m "$tag_message $new_version"
+        git push origin "v$new_version"
+        
+        echo "Created tag v$new_version with message: $tag_message $new_version"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Summary
+      run: |
+        echo "🎉 Release tag created successfully!"
+        echo "📋 New version: ${{ steps.new_version.outputs.version }}"
+        echo "🏷️ Tag: v${{ steps.new_version.outputs.version }}"
+        echo "📝 Type: ${{ github.event.inputs.release_type }}"
