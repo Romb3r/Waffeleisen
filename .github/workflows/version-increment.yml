@@ -2,13 +2,19 @@ name: Auto Version Increment
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - '**'  # Trigger on all branches
     paths-ignore:
       - 'version.txt'  # Prevent infinite loops when version.txt is updated
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
 
 jobs:
   increment-version:
     runs-on: ubuntu-latest
+    # Only run on pushes or merged PRs
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     
     steps:
     - name: Checkout code
@@ -21,6 +27,23 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
+
+    - name: Determine version increment type
+      id: version_type
+      run: |
+        if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.merged }}" == "true" ]; then
+          # PR merged into main - increment minor version
+          echo "increment_type=minor" >> $GITHUB_OUTPUT
+          echo "reason=PR merged into main" >> $GITHUB_OUTPUT
+        elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          # Direct push to main - increment minor version
+          echo "increment_type=minor" >> $GITHUB_OUTPUT
+          echo "reason=Direct push to main" >> $GITHUB_OUTPUT
+        else
+          # Push to any other branch - increment patch version
+          echo "increment_type=patch" >> $GITHUB_OUTPUT
+          echo "reason=Push to branch ${{ github.ref_name }}" >> $GITHUB_OUTPUT
+        fi
 
     - name: Increment version
       run: |
@@ -36,10 +59,26 @@ jobs:
         # Parse version components (assuming semantic versioning: major.minor.patch)
         IFS='.' read -r major minor patch <<< "$current_version"
         
-        # Increment patch version
-        patch=$((patch + 1))
-        new_version="$major.$minor.$patch"
+        increment_type="${{ steps.version_type.outputs.increment_type }}"
+        echo "Increment type: $increment_type (${{ steps.version_type.outputs.reason }})"
         
+        # Increment version based on type
+        case $increment_type in
+          major)
+            major=$((major + 1))
+            minor=0
+            patch=0
+            ;;
+          minor)
+            minor=$((minor + 1))
+            patch=0
+            ;;
+          patch|*)
+            patch=$((patch + 1))
+            ;;
+        esac
+        
+        new_version="$major.$minor.$patch"
         echo "New version: $new_version"
         echo "$new_version" > version.txt
 
@@ -51,11 +90,18 @@ jobs:
           exit 0
         fi
         
+        # Determine which branch to push to
+        if [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          target_branch="main"
+        else
+          target_branch="${{ github.ref_name }}"
+        fi
+        
         # Add and commit the version file
         git add version.txt
-        git commit -m "Auto-increment version to $(cat version.txt) [skip ci]"
+        git commit -m "Auto-increment version to $(cat version.txt) [${{ steps.version_type.outputs.increment_type }}] [skip ci]"
         
         # Push the changes
-        git push origin main
+        git push origin "$target_branch"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
