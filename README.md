@@ -25,9 +25,8 @@ This repository implements a comprehensive semantic versioning strategy:
 **Manual Release Workflow**
 Use the "Create Release Tag" workflow in GitHub Actions:
 1. Go to Actions → "Create Release Tag" → "Run workflow"
-2. Choose release type (major/minor/patch)
-3. Add optional tag message
-4. Creates properly versioned tag with updated code
+2. Add optional tag message
+3. Creates properly versioned tag with updated code
 
 # Git usefull commands
 
