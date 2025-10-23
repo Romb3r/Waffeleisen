@@ -1,0 +1,61 @@
+name: Auto Version Increment
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'version.txt'  # Prevent infinite loops when version.txt is updated
+
+jobs:
+  increment-version:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Configure Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Increment version
+      run: |
+        # Read current version
+        if [ -f version.txt ]; then
+          current_version=$(cat version.txt)
+          echo "Current version: $current_version"
+        else
+          current_version="1.0.0"
+          echo "No version.txt found, starting with: $current_version"
+        fi
+        
+        # Parse version components (assuming semantic versioning: major.minor.patch)
+        IFS='.' read -r major minor patch <<< "$current_version"
+        
+        # Increment patch version
+        patch=$((patch + 1))
+        new_version="$major.$minor.$patch"
+        
+        echo "New version: $new_version"
+        echo "$new_version" > version.txt
+
+    - name: Commit and push changes
+      run: |
+        # Check if there are changes to commit
+        if git diff --quiet version.txt; then
+          echo "No changes to version.txt, skipping commit"
+          exit 0
+        fi
+        
+        # Add and commit the version file
+        git add version.txt
+        git commit -m "Auto-increment version to $(cat version.txt) [skip ci]"
+        
+        # Push the changes
+        git push origin main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
