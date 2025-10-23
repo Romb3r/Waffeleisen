@@ -2,7 +2,8 @@ name: Auto Version Increment
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - '**'  # Trigger on all branches
     paths-ignore:
       - 'version.txt'  # Prevent infinite loops when version.txt is updated
   pull_request:
@@ -12,8 +13,6 @@ on:
 jobs:
   increment-version:
     runs-on: ubuntu-latest
-    # Only run on pushes to main or merged PRs into main
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     
     steps:
     - name: Checkout code
@@ -21,29 +20,50 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
-        ref: main  # Always checkout main branch
 
     - name: Configure Git
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
 
-    - name: Determine version increment type
+    - name: Determine version increment type and action
       id: version_type
       run: |
         if [ "${{ github.event_name }}" == "pull_request" ] && [ "${{ github.event.pull_request.merged }}" == "true" ]; then
           # PR merged into main - increment minor version
           echo "increment_type=minor" >> $GITHUB_OUTPUT
+          echo "should_increment=true" >> $GITHUB_OUTPUT
           echo "reason=PR #${{ github.event.pull_request.number }} merged into main" >> $GITHUB_OUTPUT
-        else
-          # Direct push to main - increment patch version
-          echo "increment_type=patch" >> $GITHUB_OUTPUT
+        elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          # Direct push to main - increment minor version
+          echo "increment_type=minor" >> $GITHUB_OUTPUT
+          echo "should_increment=true" >> $GITHUB_OUTPUT
           echo "reason=Direct push to main" >> $GITHUB_OUTPUT
+        else
+          # Push to feature branch - don't increment, just log
+          echo "increment_type=patch" >> $GITHUB_OUTPUT
+          echo "should_increment=false" >> $GITHUB_OUTPUT
+          echo "reason=Push to branch ${{ github.ref_name }} (version will be incremented when merged to main)" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Show version status
+      run: |
+        echo "Branch: ${{ github.ref_name }}"
+        echo "Event: ${{ github.event_name }}"
+        echo "Action: ${{ steps.version_type.outputs.reason }}"
+        echo "Will increment version: ${{ steps.version_type.outputs.should_increment }}"
+        
+        if [ -f version.txt ]; then
+          current_version=$(cat version.txt)
+          echo "Current version: $current_version"
+        else
+          echo "No version.txt found"
         fi
 
     - name: Increment version
+      if: steps.version_type.outputs.should_increment == 'true'
       run: |
-        # Read current version from main branch
+        # Read current version
         if [ -f version.txt ]; then
           current_version=$(cat version.txt)
           echo "Current version: $current_version"
@@ -56,7 +76,7 @@ jobs:
         IFS='.' read -r major minor patch <<< "$current_version"
         
         increment_type="${{ steps.version_type.outputs.increment_type }}"
-        echo "Increment type: $increment_type (${{ steps.version_type.outputs.reason }})"
+        echo "Increment type: $increment_type"
         
         # Increment version based on type
         case $increment_type in
@@ -79,6 +99,7 @@ jobs:
         echo "$new_version" > version.txt
 
     - name: Commit and push changes
+      if: steps.version_type.outputs.should_increment == 'true'
       run: |
         # Check if there are changes to commit
         if git diff --quiet version.txt; then
