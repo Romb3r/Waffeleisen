@@ -1,5 +1,4 @@
-package hardware;
-import lejos.hardware.Button;
+package sim.hardware;
 import java.util.Scanner;
 
 public class ButtonSim {

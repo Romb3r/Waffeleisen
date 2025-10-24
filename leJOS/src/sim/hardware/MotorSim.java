@@ -1,5 +1,4 @@
-package hardware;
-import lejos.hardware.motor.Motor;
+package sim.hardware;
 
 public class MotorSim {
     public static final MotorSim A = new MotorSim("A");

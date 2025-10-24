@@ -1,4 +1,4 @@
-package hardware;
+package sim.hardware;
 
 public class LCDSim {
     public static void drawString(String text, int x, int y) {
