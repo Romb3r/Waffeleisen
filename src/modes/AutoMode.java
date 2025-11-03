@@ -1,20 +1,22 @@
 package modes;
 
+import defines.Define_Mode;
+import defines.Define_Hardware;
+import hardware.BaseButton;
 import hardware.ColorSensor;
 import hardware.Motor;
 import hardware.Speaker;
-import hardware.StartBtn;
-import hardware.StopBtn;
+
 import lejos.hardware.Button;
 
 public class AutoMode extends Mode {
 	public ColorSensor color_sensor = new ColorSensor();
-	public Motor motor = new Motor(1, 70);
+	public Motor motor = new Motor(Define_Hardware.iMotorSpeed, Define_Hardware.iMotorRotationAngle * Define_Hardware.iMotorNumRotations);			// Eine Umdrehung * Anzahl Umdrehungen
 	public Speaker speaker = new Speaker();
-	public StartBtn start_btn = new StartBtn();
+	public BaseButton base_btn = new BaseButton();
 	// Konstruktoren
 	public AutoMode() {
-		this.iID = 2;
+		this.iID = Define_Mode.iAutoMode;
 		this.sName = "Automatik Modus";
 		
 	}
@@ -24,7 +26,7 @@ public class AutoMode extends Mode {
 	 * Routinen Ablauf des Auto Modus
 	 */
 		System.out.println(this.sName);
-		if(start_btn.boButtonPressed(Button.ID_UP)) {
+		if(base_btn.boButtonPressed(Button.ID_ENTER)) {
 			color_sensor.boEvalWaffleState();
 			motor.vOpen();
 			motor.vClose();
