@@ -1,8 +1,11 @@
 package hardware;
 
-public class StartBtn extends Button {
+import lejos.hardware.Button;
+
+//Klasse für den Knopf unten
+public class StartBtn extends BaseButton {
 	// Konstruktoren
 	public StartBtn() {
-		this.iID = 4;
+		this.iID = Button.ID_DOWN;
 	}
 }

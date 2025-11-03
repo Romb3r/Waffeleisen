@@ -5,7 +5,8 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class Motor {
 	// private Attribute
-	private EV3LargeRegulatedMotor CMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("S2"));
+	private EV3LargeRegulatedMotor CMotorLeft = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
+	private EV3LargeRegulatedMotor CMotorRight = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
 	private int iSpeed;
 	private int iMaxAngle;
 	
@@ -13,6 +14,8 @@ public class Motor {
 	public Motor(int iSpeed, int iMaxAngle) {
 		this.iSpeed = iSpeed;
 		this.iMaxAngle = iMaxAngle;
+		CMotorLeft.setSpeed(this.iSpeed);
+		CMotorRight.setSpeed(this.iSpeed);
 	}
 	
 	// öffentliche Methoden
@@ -20,13 +23,16 @@ public class Motor {
 	/*
 	 * Steuert den Motor so an, dass das Waffeleisen geöffnet wird
 	 */
-		// TODO: implementieren
+		CMotorLeft.rotate(this.iMaxAngle * (-1), true);			// * (-1) um die Drehrichtung anzupassen
+		CMotorRight.rotate(this.iMaxAngle * (-1), true);		// * (-1) um die Drehrichtung anzupassen
+
 	}
 	
 	public void vClose() {
 	/*
 	 * Steuert den Motor so an, dass das Waffeleisen geschlossen wird 
 	 */
-		// TODO: implementieren
+		CMotorLeft.rotate(this.iMaxAngle, true);
+		CMotorRight.rotate(this.iMaxAngle, true);
 	}
 }

@@ -5,6 +5,7 @@ import hardware.Motor;
 import hardware.Speaker;
 import hardware.StartBtn;
 import hardware.StopBtn;
+import lejos.hardware.Button;
 
 public class AutoMode extends Mode {
 	public ColorSensor color_sensor = new ColorSensor();
@@ -23,7 +24,7 @@ public class AutoMode extends Mode {
 	 * Routinen Ablauf des Auto Modus
 	 */
 		System.out.println(this.sName);
-		if(start_btn.boPressed(start_btn.iGetID())) {
+		if(start_btn.boButtonPressed(Button.ID_UP)) {
 			color_sensor.boEvalWaffleState();
 			motor.vOpen();
 			motor.vClose();
