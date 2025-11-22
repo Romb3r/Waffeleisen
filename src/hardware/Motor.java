@@ -23,16 +23,15 @@ public class Motor {
 	/*
 	 * Steuert den Motor so an, dass das Waffeleisen geöffnet wird
 	 */
-		CMotorLeft.rotate(this.iMaxAngle, true);			    // Drehe linken Motor. True damit die Funktion nicht blockiert.
-		CMotorRight.rotate(this.iMaxAngle * (-1), true);		// Drehe rechten Motor. * (-1) um die Drehrichtung anzupassen. True damit die Funktion nicht blockiert.
-
+		CMotorLeft.rotate(this.iMaxAngle * (-1), true);				// Drehe linken Motor. * (-1) um die Drehrichtung anzupassen. True damit die Funktion nicht blockiert.
+		CMotorRight.rotate(this.iMaxAngle, true);				    // Drehe rechten Motor. True damit die Funktion nicht blockiert.
 	}
 	
 	public void vClose() {
 	/*
 	 * Steuert den Motor so an, dass das Waffeleisen geschlossen wird 
 	 */
-		CMotorLeft.rotate(this.iMaxAngle * (-1), true);				// Drehe linken Motor. * (-1) um die Drehrichtung anzupassen. True damit die Funktion nicht blockiert.
-		CMotorRight.rotate(this.iMaxAngle, true);				    // Drehe rechten Motor. True damit die Funktion nicht blockiert.
+		CMotorLeft.rotate(this.iMaxAngle, true);			    // Drehe linken Motor. True damit die Funktion nicht blockiert.
+		CMotorRight.rotate(this.iMaxAngle * (-1), true);		// Drehe rechten Motor. * (-1) um die Drehrichtung anzupassen. True damit die Funktion nicht blockiert.
 	}
 }
