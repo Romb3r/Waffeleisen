@@ -1,11 +1,13 @@
 package hardware;
 
+import defines.Define_WaffleState;
+
 import lejos.hardware.sensor.SensorMode;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.ev3.LocalEV3;
 
 
-// TODO: Wie Sensor ansteuern?
+
 public class ColorSensor {
 	// private Attribute
 	private EV3ColorSensor color_sensor = new EV3ColorSensor(LocalEV3.get().getPort("S1"));
@@ -19,12 +21,13 @@ public class ColorSensor {
 	}
 	
 	// öffentliche Methoden
-	public boolean boEvalWaffleState() {
+	public int iEvalWaffleState() {
 	/*
 	 * Anhand des Farbsensors wird ausgewertet, ob die Waffel fertig gebacken wurde
 	 */
 		color_sensor.fetchSample(rgb_colors, 0);
 		// TODO: Logik implementieren
-		return true;
+		
+		return Define_WaffleState.iEmpty;
 	}
 }
