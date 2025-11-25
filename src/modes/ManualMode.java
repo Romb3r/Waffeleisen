@@ -1,21 +1,23 @@
 package modes;
 
-import defines.Define_Hardware;
 import defines.Define_Mode;
 import hardware.Motor;
 import hardware.BaseButton;
-import hardware.Speaker;
+import hardware.ColorSensor;
 
 import lejos.hardware.Button;
 
 
 public class ManualMode extends Mode {
-	public Motor motor = new Motor(Define_Hardware.iMotorSpeed, Define_Hardware.iMotorRotationAngle * Define_Hardware.iMotorNumRotations);			// Eine Umdrehung * Anzahl Umdrehungen
-	public BaseButton base_btn = new BaseButton();
-	public Speaker speaker = new Speaker();
+	private Motor motor;
+	private BaseButton base_btn;
+	private ColorSensor color_sensor;
 	
 	// Konstruktoren
-	public ManualMode() {
+	public ManualMode(Motor m, BaseButton bs, ColorSensor cs) {
+		this.motor = m;
+		this.base_btn = bs;
+		this.color_sensor = cs;
 		this.iID = Define_Mode.iManualMode;
 		this.sName = "Manueller Modus";
 	}
@@ -26,15 +28,27 @@ public class ManualMode extends Mode {
 	 * Routinen Ablauf des Manuellen Modus
 	 */
 		boolean boRun = true;
-		System.out.println("START KNOPF PRESSEN");
+		System.out.println("Hoch / Runter / Escape");
 		while(boRun) {
-			if(base_btn.boButtonPressed(Button.ID_UP)) {			// Öffne Waffeleisen wenn Taste OBEN gedrückt wurde
-				motor.vOpen();
+			if(this.base_btn.boButtonPressed(Button.ID_UP)) {				// Öffne Waffeleisen wenn Taste OBEN gedrückt wurde
+				this.motor.vOpen();
+				while (this.motor.getLeftMotor().isMoving()) {
+					if(this.color_sensor.boIsOpen()) {
+						this.motor.getLeftMotor().stop();
+						this.motor.getRightMotor().stop();
+					}
+				}
 			}
-			if(base_btn.boButtonPressed(Button.ID_DOWN)) {			// Schließe Waffeleisen wenn Taste UNTEN gedrückt wurde
-				motor.vClose();
+			if(this.base_btn.boButtonPressed(Button.ID_DOWN)) {				// Schließe Waffeleisen wenn Taste UNTEN gedrückt wurde
+				this.motor.vClose();
+				while (this.motor.getLeftMotor().isMoving()) {
+					if(this.color_sensor.boIsClosed()) {
+						this.motor.getLeftMotor().stop();
+						this.motor.getRightMotor().stop();
+					}
+				}
 			}
-			if(base_btn.boButtonPressed(Button.ID_ENTER)) {			// Breche ab, wenn Taste MITTE gedrückt wurde
+			if(this.base_btn.boButtonPressed(Button.ID_ESCAPE)) {			// Breche ab, wenn Taste ESCAPE gedrückt wurde
 				boRun = false;
 			}
 		}

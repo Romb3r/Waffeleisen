@@ -5,7 +5,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.ev3.LocalEV3;
 
 
-// TODO: Wie Sensor ansteuern?
+
 public class ColorSensor {
 	// private Attribute
 	private EV3ColorSensor color_sensor = new EV3ColorSensor(LocalEV3.get().getPort("S1"));
@@ -18,13 +18,23 @@ public class ColorSensor {
 		this.color_sensor.setCurrentMode("RGB");
 	}
 	
-	// öffentliche Methoden
-	public boolean boEvalWaffleState() {
-	/*
-	 * Anhand des Farbsensors wird ausgewertet, ob die Waffel fertig gebacken wurde
-	 */
+	public boolean boIsOpen() {
 		color_sensor.fetchSample(rgb_colors, 0);
-		// TODO: Logik implementieren
-		return true;
+		if((rgb_colors[0] > 0.042156864) && (rgb_colors[0] < 0.04411765)) {			// Idikator für OFFEN => Gelber Stein
+			if(rgb_colors[2] > 0.0001) {											// B Stelle muss größer 0.0001 sein
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean boIsClosed() {
+		color_sensor.fetchSample(rgb_colors, 0);
+		if((rgb_colors[0] > 0.028431373) && (rgb_colors[0] < 0.029411765)) {		// Idikator für GESCHLOSSEN => Roter Stein
+			if(rgb_colors[2] <= 0.0001) {											// B Stelle muss fast 0 sein
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -5,25 +5,37 @@ package main;
 
 import menu.ModeMenu;
 import menu.SystemInfoMenu;
+import defines.Define_Hardware;
 import defines.Define_Mode;
+import hardware.BaseButton;
+import hardware.ColorSensor;
+import hardware.Motor;
+import hardware.Speaker;
 import modes.AutoMode;
 import modes.ManualMode;
+
 
 public class Main {
 	public static void main(String[] args) {
 		int iModus = 0;
-		SystemInfoMenu CSysInfoMenu = new SystemInfoMenu();								// erzeuge Objekt der Klasse SystemInfoMenu
-		ModeMenu CModeMenu = new ModeMenu();											// erzeuge Objekt der Klasse ModeMenu
-		CSysInfoMenu.vZeigeTxt(CSysInfoMenu.sGetSysInfoString());						// Zeige im SystemInfoMenu Konstruktoraufruf erzeugten System Status String
-		CModeMenu.vShowMenu();															// Starte Menüführung zur Modusauswahl
-		iModus = CModeMenu.iGetMode();													// Hole den ausgewählten Modus
-		if(iModus == Define_Mode.iAutoMode) {											// \
-			AutoMode CAutoMode = new AutoMode();										//  \
-			CAutoMode.vRoutine();														//   \
-		}																				//	   Aufruf unterschiedlicher Konstruktoren und Routinen für unterschiedliche Modi
-		else if(iModus == Define_Mode.iManualMode) {									//   /
-			ManualMode CManualMode = new ManualMode();									//  /
-			CManualMode.vRoutine();														// /
+		ColorSensor color_sensor = new ColorSensor();
+		Motor motor = new Motor(Define_Hardware.iMotorSpeed, Define_Hardware.iMotorRotationAngle * Define_Hardware.iMotorNumRotations);			// Eine Umdrehung * Anzahl Umdrehungen
+		Speaker speaker = new Speaker();
+		BaseButton base_btn = new BaseButton();
+		SystemInfoMenu CSysInfoMenu = new SystemInfoMenu();									// erzeuge Objekt der Klasse SystemInfoMenu
+		ModeMenu CModeMenu = new ModeMenu();												// erzeuge Objekt der Klasse ModeMenu
+		CSysInfoMenu.vZeigeTxt(CSysInfoMenu.sGetSysInfoString());							// Zeige im SystemInfoMenu Konstruktoraufruf erzeugten System Status String
+		while(!CModeMenu.boGetExitProgramm()) {												// Laufe solange bis der Escape Button gedrückt wurde
+			CModeMenu.vShowMenu();															// Starte Menüführung zur Modusauswahl
+			iModus = CModeMenu.iGetMode();													// Hole den ausgewählten Modus
+			if(iModus == Define_Mode.iAutoMode) {											// \
+				AutoMode CAutoMode = new AutoMode(color_sensor, motor, speaker, base_btn);	//  \
+				CAutoMode.vRoutine();														//   \
+			}																				//	   Aufruf unterschiedlicher Konstruktoren und Routinen für unterschiedliche Modi
+			else if(iModus == Define_Mode.iManualMode) {									//   /
+				ManualMode CManualMode = new ManualMode(motor, base_btn, color_sensor);		//  /
+				CManualMode.vRoutine();														// /
+			}
 		}
-	}			
+	}
 }
