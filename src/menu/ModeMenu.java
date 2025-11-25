@@ -5,7 +5,7 @@ import lejos.hardware.Button;
 public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	// private Attribute
 	private int iMode;									// integer zur Modus Speicherung (1 = manuell / 2 = auto)
-	
+	private boolean boExitProgramm;
 	// private Methoden
 	private void vSetMode() {
 	/*
@@ -55,8 +55,9 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	        	this.vZeigeTxt("Modus Automatik gewählt. Bitte aufpassen beim erhitzen des Waffeleisens!"); 	// - Automatikbetrieb = mach eine Waffel...
 	        	break;
 	        		
-	        case 3: 
-	        	this.vZeigeTxt("Taste 3");
+	        case Button.ID_ESCAPE: 
+	        	this.vZeigeTxt("Programm beenden... ");
+	        	this.boExitProgramm = true;
 	        	//Modus = 3; // - noch keine Verwendung
 	        	break;
 	        		
@@ -74,5 +75,9 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	        	break;
         }
 		Button.waitForAnyPress();	// damit Text nicht vorzeitig verschwindet
+	}
+	
+	public boolean boGetExitProgramm() {
+		return this.boExitProgramm;
 	}
 }
