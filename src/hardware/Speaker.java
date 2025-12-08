@@ -8,6 +8,6 @@ public class Speaker {
 	
 	// öffentliche Methoden
 	public void vDoBeep() {
-		Sound.beepSequence();
+		Sound.twoBeeps();
 	}
 }

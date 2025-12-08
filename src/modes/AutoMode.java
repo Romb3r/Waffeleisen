@@ -53,9 +53,10 @@ public class AutoMode extends Mode {
 						}
 					}	
 				} while (iWaffleState == Define_WaffleState.iEmpty);															// Wiederhole Do While Schleife wenn kein Teig vorhanden 																						// Waffle State Sensor wieder rausfahren
+				this.motor.vSensorOut();
 				this.motor.vClose();																							// Schliesse Waffeleisen
 				this.vStopMotor(false);																							// Stoppe Motor, wenn Waffeleisen geschlossen
-				while (iWaffleState == Define_WaffleState.iNotReady && iWaffleState != Define_WaffleState.iEmpty) {				// Laufe solange bis Waffel fertig
+				while (iWaffleState == Define_WaffleState.iNotReady) {															// Laufe solange bis Waffel fertig
 					vCook(Define_Timer.iSleepTimeMS);																			// Waffeleisen zu: Backe Teig	
 					this.motor.vOpen();																							// Oeffne Waffeleisen
 					this.vStopMotor(true); 																						// Stoppe Motor, wenn Waffeleisen geoeffnet
@@ -63,14 +64,15 @@ public class AutoMode extends Mode {
 					this.motor.vSensorIn(); 																					// Bringe Sensor fuer die Ueberpruefung des Waffle States in Position
 					iWaffleState = this.color_sensor.iEvalWaffleState();														// Werte aus, ob Teig fertig, wenn ja gehe aus der Schleife raus
 					this.motor.vSensorOut(); 																					// Fahre Sensor zurueck in Position
-					
+					if(iWaffleState == Define_WaffleState.iReady) {
+						break;
+					}
 					this.motor.vClose(); 																						// Schliesse Waffeleisen um weiter zu backen
 					this.vStopMotor(false); 																					// Stoppe Motor, wenn Waffeleisen geschlossen
 				}
 				if(iWaffleState == Define_WaffleState.iReady) {
 					this.speaker.vDoBeep();																							// Waffel fertig, gebe einen Ton wieder
-					vWaitFor(Define_Timer.iWaffleRemovalTime);  																	// Warte um Waffel entnehmen zu koennen
-					boRun = !this.base_btn.boButtonPressedBlockingTimeout(Button.ID_ESCAPE, Define_Timer.iWaitTimeStopBtnPress);	// Wenn Stop Knopf gedrueckt wurde, liefert die Funktion true zurueck, allerdings soll dann der Automatikmodus abgebrochen werden, also invertieren mit "!"
+					boRun = !this.base_btn.boButtonPressedBlockingTimeout(Button.ID_ESCAPE, Define_Timer.iWaffleRemovalTime);		// Wenn Stop Knopf gedrueckt wurde, liefert die Funktion true zurueck, allerdings soll dann der Automatikmodus abgebrochen werden, also invertieren mit "!"
 					Define_Timer.vResetSleepTime();																					// Setze Timer der Backzeit zurueck fuer neue Waffel
 				}
 			}

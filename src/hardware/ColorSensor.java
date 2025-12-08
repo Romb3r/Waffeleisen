@@ -17,6 +17,7 @@ public class ColorSensor {
 	private float red;
 	private float green;
 	private float blue;
+	private int iTest = 0;
 	
 	// Konstruktoren
 	public ColorSensor() {
@@ -50,7 +51,18 @@ public class ColorSensor {
 		else if(this.rgb_colors[2] > 0.3) {
 			return Define_WaffleState.iNotReady;
 			}*/
-		return Define_WaffleState.iEmpty;
+		if(this.iTest == 0) {
+			this.iTest += 1;
+			return Define_WaffleState.iEmpty;
+		}
+		if(this.iTest == 1) {
+			this.iTest += 1;
+			return Define_WaffleState.iNotReady;
+		}
+		else {
+			this.iTest = 0;
+			return Define_WaffleState.iReady;
+		}
 	}
 	
 	private void vFetchSampleEndSwitch() {
