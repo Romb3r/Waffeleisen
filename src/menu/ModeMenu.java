@@ -9,34 +9,34 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	// private Methoden
 	private void vSetMode() {
 	/*
-	 * Setzt den Modus anhand welcher Knopf gedr¸ckt wurde
+	 * Setzt den Modus anhand welcher Knopf gedrÔøΩckt wurde
 	 */
 		this.iMode = Button.waitForAnyPress();
 	}
 	
-	// ˆffentliche Methoden
+	// ÔøΩffentliche Methoden
 	public int iGetMode() {
 	/*
-	 * Gibt den aktuellen Modus an den Aufrufer zur¸ck
+	 * Gibt den aktuellen Modus an den Aufrufer zurueck
 	 */
 		return this.iMode;
 	}
 	
 	public void vShowMenu() {
 	/*
-	 * Zeigt die Auswahlmˆglichkeiten der einzelnen Modi an.
-	 * Erwartet dann einen Tastendruck um den Modus auszuw‰hlen.
-	 * Zeigt an welcher Modus gew‰hlt wurde.
+	 * Zeigt die Auswahlmoeglichkeiten der einzelnen Modi an.
+	 * Erwartet dann einen Tastendruck um den Modus auszuwaehlen.
+	 * Zeigt an welcher Modus gewaehlt wurde.
 	 */
 		this.vZeigeTxt("Bitte waehlen Sie einen Modus auf den Pfeiltasten.");					
-		// wegen langem Text, scroll-M√∂glichkeit w√§re hier optimal
+		// wegen langem Text, scroll-Moeglichkeit waere hier optimal
 		Button.waitForAnyPress();
 		
 		this.vZeigeTxt("oben -> manueller Betrieb");
 		this.vZeigeTxt("mitte -> Automatikbetrieb");
 		this.vZeigeTxt("unten -> Konfiguration");
 		
-		this.vSetMode();								// Funktionsaufruf um den Modus auszuw‰hlen
+		this.vSetMode();								// Funktionsaufruf um den Modus auszuwaehlen
 		
 		switch(this.iMode)
         {
@@ -47,12 +47,12 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	        		
 	        case 1: 
 	        	this.vZeigeTxt("Taste: Pfeil oben"); 	// --> Pfeil oben
-	        	this.vZeigeTxt("Modus manueller Betrieb gew√§hlt!"); 	// - manueller Betrieb = Motor kann sp‰ter ¸ber Tasten angesteuert werden
+	        	this.vZeigeTxt("Modus manueller Betrieb gew√§hlt!"); 	// - manueller Betrieb = Motor kann spaeter ueber Tasten angesteuert werden
 	        	break;
 	        		
 	        case 2: 
 	        	this.vZeigeTxt("Taste: Mitte "); 	// --> mittelere Taste
-	        	this.vZeigeTxt("Modus Automatik gew√§hlt. Bitte aufpassen beim erhitzen des Waffeleisens!"); 	// - Automatikbetrieb = mach eine Waffel...
+	        	this.vZeigeTxt("Modus Automatik gewaehlt!"); 	// - Automatikbetrieb = mach eine Waffel...
 	        	break;
 	        		
 	        case Button.ID_ESCAPE: 
