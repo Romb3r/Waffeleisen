@@ -32,8 +32,10 @@ public class ManualMode extends Mode {
 		while(boRun) {
 			if(this.base_btn.boButtonPressed(Button.ID_UP)) {				// Öffne Waffeleisen wenn Taste OBEN gedrückt wurde
 				this.motor.vOpen();
-				while (this.motor.getLeftMotor().isMoving()) {
-					if(this.color_sensor.boIsOpen()) {
+				while (this.motor.getLeftMotor().isMoving() &&				// Solange beide Motoren drehen
+					   this.motor.getRightMotor().isMoving())
+				{		
+					if(this.color_sensor.boIsOpen()) {						// Wenn Waffeleisen geöffnet, stoppe beide Motoren
 						this.motor.getLeftMotor().stop();
 						this.motor.getRightMotor().stop();
 					}
@@ -41,8 +43,10 @@ public class ManualMode extends Mode {
 			}
 			if(this.base_btn.boButtonPressed(Button.ID_DOWN)) {				// Schließe Waffeleisen wenn Taste UNTEN gedrückt wurde
 				this.motor.vClose();
-				while (this.motor.getLeftMotor().isMoving()) {
-					if(this.color_sensor.boIsClosed()) {
+				while (this.motor.getLeftMotor().isMoving() &&				// Solange beide Motoren drehen
+					   this.motor.getRightMotor().isMoving())
+				{
+					if(this.color_sensor.boIsClosed()) {					// Wenn Waffeleisen geschlossen, stoppe beide Motoren
 						this.motor.getLeftMotor().stop();
 						this.motor.getRightMotor().stop();
 					}

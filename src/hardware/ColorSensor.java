@@ -4,6 +4,7 @@ import lejos.hardware.sensor.SensorMode;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.ev3.LocalEV3;
 
+import defines.Define_WaffleState;
 
 
 public class ColorSensor {
