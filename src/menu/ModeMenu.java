@@ -6,15 +6,16 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	// private Attribute
 	private int iMode;									// integer zur Modus Speicherung (1 = manuell / 2 = auto)
 	private boolean boExitProgramm;
+	
 	// private Methoden
 	private void vSetMode() {
 	/*
-	 * Setzt den Modus anhand welcher Knopf gedr�ckt wurde
+	 * Setzt den Modus anhand welcher Knopf gedrueckt wurde
 	 */
 		this.iMode = Button.waitForAnyPress();
 	}
 	
-	// �ffentliche Methoden
+	// Oeffentliche Methoden
 	public int iGetMode() {
 	/*
 	 * Gibt den aktuellen Modus an den Aufrufer zurueck
@@ -47,7 +48,7 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	        		
 	        case 1: 
 	        	this.vZeigeTxt("Taste: Pfeil oben"); 	// --> Pfeil oben
-	        	this.vZeigeTxt("Modus manueller Betrieb gewählt!"); 	// - manueller Betrieb = Motor kann spaeter ueber Tasten angesteuert werden
+	        	this.vZeigeTxt("Modus manueller Betrieb gewaehlt!"); 	// - manueller Betrieb = Motor kann spaeter ueber Tasten angesteuert werden
 	        	break;
 	        		
 	        case 2: 
@@ -63,7 +64,7 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	        		
 	        case 4: 
 	        	this.vZeigeTxt("Taste: Pfeil unten"); 	// --> Pfeil unten
-	        	this.vZeigeTxt("Modus Konfiguration gewählt!"); 	// - Konfiguration könnte sowas wie ein "Probe"-Waffel sein. vllt stoppen wir die Zeit & man kann seinen Bräunungsgrad speichern.. 
+	        	this.vZeigeTxt("Modus Konfiguration gewaehlt!"); 	// - Konfiguration koennte sowas wie ein "Probe"-Waffel sein. vllt stoppen wir die Zeit & man kann seinen Braeunungsgrad speichern.. 
 	        	break;
 	        		
 	        case 5: 

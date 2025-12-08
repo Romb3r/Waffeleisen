@@ -18,7 +18,7 @@ public class Motor {
 		this.iMaxAngle = iMaxAngle;																					//	 Initialisieren der Werte im Konstruktor
 		CMotorLeft.setSpeed(this.iSpeed);																			//  /
 		CMotorRight.setSpeed(this.iSpeed);																			// /
-		CMotorState.setSpeed(15);
+		CMotorState.setSpeed(200);
 	}
 	
 	// oeffentliche Methoden
@@ -38,18 +38,18 @@ public class Motor {
 		CMotorRight.backward();
 	}
 	
-	public void vEinfahren() {
+	public void vSensorIn() {
 	/*
-	 * Sensor fährt ins Werkzeug ein, zum WaffelStateCheck
+	 * Sensor faehrt ins Werkzeug ein, zum WaffelStateCheck
 	 */
-		CMotorState.rotate(30);
+		CMotorState.rotate(-1*130);
 	}
 	
-	public void vAusfahren() {
+	public void vSensorOut() {
 	/*
-	 * Sensor fährt aus dem Werkzeug heraus, auf Grundstellung
+	 * Sensor faehrt aus dem Werkzeug heraus, auf Grundstellung
 	 */
-		CMotorState.rotate(-1*30);
+		CMotorState.rotate(130);
 	}
 	
 	public EV3LargeRegulatedMotor getLeftMotor() {
