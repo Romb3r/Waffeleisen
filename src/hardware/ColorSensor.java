@@ -22,8 +22,8 @@ public class ColorSensor {
 	// Konstruktoren
 	public ColorSensor() {
 		this.rgb_colors = new float[sensor_mode.sampleSize()];
-		this.EndSwitchColor_sensor.setCurrentMode(this.EndSwitchColor_sensor.getColorIDMode().getName());			// Color ID Mode
-		this.WaffelStateColor_sensor.setCurrentMode("RGB");
+		this.EndSwitchColor_sensor.setCurrentMode(this.EndSwitchColor_sensor.getColorIDMode().getName());
+		this.WaffelStateColor_sensor.setCurrentMode(this.WaffelStateColor_sensor.getRGBMode().getName());
 	}
 	
 	// Oeffentliche Methoden
@@ -42,15 +42,13 @@ public class ColorSensor {
 	}
 
 	public int iEvalWaffleState() {
-		// Check fuer WaffelState --> blau wert ist der beste Indikator!
-		/*this.vFetchSampleWaffleState();
-		if(red > green) {
-			if(green > blue)
+		this.vFetchSampleWaffleState();
+		if(red > green && green > blue) {
 			return Define_WaffleState.iReady; 
 			}
-		else if(this.rgb_colors[2] > 0.3) {
+		else if(blue > 0.3) {
 			return Define_WaffleState.iNotReady;
-			}*/
+			}
 		if(this.iTest == 0) {
 			this.iTest += 1;
 			return Define_WaffleState.iEmpty;
@@ -63,13 +61,6 @@ public class ColorSensor {
 			this.iTest = 0;
 			return Define_WaffleState.iReady;
 		}
-	}
-	
-	private void vFetchSampleEndSwitch() {
-		this.EndSwitchColor_sensor.fetchSample(this.rgb_colors, 0);
-		this.red = rgb_colors[0];
-		this.green = rgb_colors[1];
-		this.blue = rgb_colors[2];
 	}
 	
 	private void vFetchSampleWaffleState() {
