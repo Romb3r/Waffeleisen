@@ -6,7 +6,7 @@ import hardware.Motor;
 import hardware.Speaker;
 
 public class Mode {
-	// geschützte Attribute
+	// geschuetzte Attribute
 	protected int iID;					// ID des Modus
 	protected String sName;				// Name des Modus
 }
