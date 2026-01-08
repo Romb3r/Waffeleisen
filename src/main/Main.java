@@ -25,13 +25,13 @@ public class Main {
 		SystemInfoMenu CSysInfoMenu = new SystemInfoMenu();									// erzeuge Objekt der Klasse SystemInfoMenu
 		ModeMenu CModeMenu = new ModeMenu();												// erzeuge Objekt der Klasse ModeMenu
 		CSysInfoMenu.vZeigeTxt(CSysInfoMenu.sGetSysInfoString());							// Zeige im SystemInfoMenu Konstruktoraufruf erzeugten System Status String
-		while(!CModeMenu.boGetExitProgramm()) {												// Laufe solange bis der Escape Button gedrückt wurde
-			CModeMenu.vShowMenu();															// Starte Menüführung zur Modusauswahl
-			iModus = CModeMenu.iGetMode();													// Hole den ausgewählten Modus
+		while(!CModeMenu.boGetExitProgramm()) {												// Laufe solange bis der Escape Button gedrueckt wurde
+			CModeMenu.vShowMenu();															// Starte Menuefuehrung zur Modusauswahl
+			iModus = CModeMenu.iGetMode();													// Hole den ausgewaehlten Modus
 			if(iModus == Define_Mode.iAutoMode) {											// \
 				AutoMode CAutoMode = new AutoMode(color_sensor, motor, speaker, base_btn);	//  \
 				CAutoMode.vRoutine();														//   \
-			}																				//	   Aufruf unterschiedlicher Konstruktoren und Routinen für unterschiedliche Modi
+			}																				//	   Aufruf unterschiedlicher Konstruktoren und Routinen fuer unterschiedliche Modi
 			else if(iModus == Define_Mode.iManualMode) {									//   /
 				ManualMode CManualMode = new ManualMode(motor, base_btn, color_sensor);		//  /
 				CManualMode.vRoutine();														// /
