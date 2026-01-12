@@ -42,15 +42,17 @@ public class ColorSensor {
 
 	public int iEvalWaffleState() {
 		this.vFetchSampleWaffleState();
-		float grey = red - green;
-		if(red > green && green > blue) {
-			return Define_WaffleState.iReady; 
-		}
-		else if(grey > 0.1){
+		float grey = (red - green) + (green - blue) + (red - blue);		// Wie hoch ist der Grau Anteil?
+		float cooked = red + green + blue;								// Wie weit ist die Waffel durchgebacken?
+																		// Auswertung
+		if(grey < 0.01 && cooked < 0.025){
 			return Define_WaffleState.iNotReady;
 		}
+		if(grey < 0.01) {
+			return Define_WaffleState.iEmpty; 
+		}
 		else {
-			return Define_WaffleState.iEmpty;
+			return Define_WaffleState.iReady;
 		}
 	}
 	

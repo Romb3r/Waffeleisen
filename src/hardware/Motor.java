@@ -42,14 +42,14 @@ public class Motor {
 	/*
 	 * Sensor faehrt ins Werkzeug ein, zum WaffelStateCheck
 	 */
-		CMotorState.rotate(-1*130);
+		CMotorState.rotate(190);
 	}
 	
 	public void vSensorOut() {
 	/*
 	 * Sensor faehrt aus dem Werkzeug heraus, auf Grundstellung
 	 */
-		CMotorState.rotate(130);
+		CMotorState.rotate(-1*190);
 	}
 	
 	public EV3LargeRegulatedMotor getLeftMotor() {
