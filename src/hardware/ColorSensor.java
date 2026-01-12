@@ -27,6 +27,9 @@ public class ColorSensor {
 	
 	// Oeffentliche Methoden
 	public boolean boIsOpen() {
+		/*
+		 * Werte Farbsensor aus, wenn Blau erkannt liefere true, ansonsten false
+		 */
 		if(this.EndSwitchColor_sensor.getColorID() == Color.BLUE) {
 			return true;
 		}
@@ -34,6 +37,9 @@ public class ColorSensor {
 	}
 	
 	public boolean boIsClosed() {
+		/*
+		 * Werte Farbsensor aus, wenn Rot erkannt liefere true, ansonsten false
+		 */
 		if(this.EndSwitchColor_sensor.getColorID() == Color.RED) {
 			return true;
 		}
@@ -41,23 +47,91 @@ public class ColorSensor {
 	}
 
 	public int iEvalWaffleState() {
+		boolean boValid = false;
 		this.vFetchSampleWaffleState();
-		float grey = red - green;
-		if(red > green && green > blue) {
-			return Define_WaffleState.iReady; 
+		
+		while(!boValid) {
+			System.out.println("Hole Wafflestate");
+			this.vFetchSampleWaffleState();
+			if(this.boCheckRed(0.016, 0.017) && this.boCheckGreen(0.075, 0.085) && this.boCheckBlue(0.008, 0.009)) {
+				System.out.println("Empty");
+				return Define_WaffleState.iEmpty;
+			}
+			
+			if(this.boCheckRed(0.0875, 0.08975) && this.boCheckGreen(0.0885, 0.0985) && this.boCheckBlue(0.0275, 0.0375)) {
+				System.out.println("Not ready");
+				return Define_WaffleState.iNotReady;
+			}
+			
+			if(this.boCheckRed(0.004, 0.001) && this.boCheckGreen(0.003, 0.018) && this.boCheckBlue(0.0009, 0.004)) {
+				System.out.println("Ready");
+				return Define_WaffleState.iReady;
+			}
 		}
-		else if(grey > 0.1){
-			return Define_WaffleState.iNotReady;
+		return 99;
+	}
+		
+		//Berechnungen
+		/*float REDminusGREEN = red - green;
+		float REDminusBLUE = red - blue;
+		float GREENminusBLUE = green - blue;
+		float GREENminusRED  = green - red;
+		float BLUEminusRED = blue - red;
+		float BLUEminusGREEN = blue - green;
+		
+		// negativer Wert umwandeln
+		if(REDminusGREEN < 0) {
+			REDminusGREEN = REDminusGREEN * (-1);
 		}
-		else {
+		if(REDminusGREEN < 0.08 && blue < 0.01) {
+			System.out.println("Empty");
 			return Define_WaffleState.iEmpty;
 		}
-	}
+		else if (REDminusGREEN < 0.08 && blue < 0.01)
+		{
+			System.out.println("Ready");
+			return Define_WaffleState.iReady;
+		}
+		else if(red > green && green > blue)
+		{
+			System.out.println("Not Ready");
+			return Define_WaffleState.iNotReady;
+		}
+		else {System.out.println("quatsch ausgewertet");
+		return 99;
+		}
+		
+	}*/
 	
 	private void vFetchSampleWaffleState() {
+		/*
+		 * Hole ein Color Sensor Sample
+		 * Speichere in den verschiedenen Variablen
+		 */
 		this.WaffelStateColor_sensor.fetchSample(this.rgb_colors, 0);
 		this.red = rgb_colors[0];
 		this.green = rgb_colors[1];
 		this.blue = rgb_colors[2];
+	}
+	
+	private boolean boCheckRed(double fMin, double fMax) {
+		if(red <= fMax && red > fMin) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean boCheckGreen(double fMin, double fMax) {
+		if(green <= fMax && green > fMin) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean boCheckBlue(double fMin, double fMax) {
+		if(blue <= fMax && blue > fMin) {
+			return true;
+		}
+		return false;
 	}
 }

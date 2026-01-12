@@ -31,7 +31,7 @@ public class ManualMode extends Mode {
 		System.out.println("Hoch / Runter / Escape");
 		while(boRun) {
 			if(this.base_btn.boButtonPressed(Button.ID_UP)) {				// Öffne Waffeleisen wenn Taste OBEN gedrückt wurde
-				this.motor.vOpen();
+				this.motor.iOpen();
 				while (this.motor.getLeftMotor().isMoving() &&				// Solange beide Motoren drehen
 					   this.motor.getRightMotor().isMoving())
 				{		
@@ -42,7 +42,7 @@ public class ManualMode extends Mode {
 				}
 			}
 			if(this.base_btn.boButtonPressed(Button.ID_DOWN)) {				// Schließe Waffeleisen wenn Taste UNTEN gedrückt wurde
-				this.motor.vClose();
+				this.motor.iClose();
 				while (this.motor.getLeftMotor().isMoving() &&				// Solange beide Motoren drehen
 					   this.motor.getRightMotor().isMoving())
 				{
