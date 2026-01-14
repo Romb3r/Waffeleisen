@@ -123,7 +123,7 @@ public class ColorSensor {
 			fArrNotReady[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrNotReady[Define_WaffleState.iPosBlue][i] = this.blue;
 			Delay.msDelay(1500);
-			motor.vSensorIn(iRotationAngle);
+			motor.vSensorOut(iRotationAngle);
 			iRotationAngle = iRotationAngle + 3;
 		}
 		
