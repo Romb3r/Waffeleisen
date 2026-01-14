@@ -29,8 +29,8 @@ public class ColorSensor {
 	// Konstruktoren
 	public ColorSensor() {
 		this.rgb_colors = new float[sensor_mode.sampleSize()];
-		this.fEmptyMinMax = new float[3][Define_WaffleState.iNumCalibSteps];
-		this.fNotReadyMinMax = new float[3][Define_WaffleState.iNumCalibSteps];
+		this.fEmptyMinMax = new float[3][2];
+		this.fNotReadyMinMax = new float[3][2];
 		this.fArrEmpty = new float[3][Define_WaffleState.iNumCalibSteps];
 		this.fArrNotReady = new float[3][Define_WaffleState.iNumCalibSteps];
 		this.EndSwitchColor_sensor.setCurrentMode(this.EndSwitchColor_sensor.getColorIDMode().getName());
@@ -60,16 +60,14 @@ public class ColorSensor {
 	
 	public void vCalibEmpty(Motor motor) {
 		// Messungen machen
-		int iRotationAngle = 187;
 		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			motor.vSensorIn(iRotationAngle);
+			motor.vSensorIn(200);
 			this.vFetchSampleWaffleState();
 			fArrEmpty[Define_WaffleState.iPosRed][i] = this.red;
 			fArrEmpty[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrEmpty[Define_WaffleState.iPosBlue][i] = this.blue;
 			Delay.msDelay(1500);
-			motor.vSensorOut(iRotationAngle);
-			iRotationAngle = iRotationAngle + 3;
+			motor.vSensorOut(200);
 		}
 		
 		// Min und Max Werte für die entsprechenden Farben kalkulieren und wegspeichern
@@ -115,16 +113,14 @@ public class ColorSensor {
 	
 	public void vCalibNotReady(Motor motor) {
 		// Messungen machen
-		int iRotationAngle = 187;
 		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			motor.vSensorIn(iRotationAngle);
+			motor.vSensorIn(200);
 			this.vFetchSampleWaffleState();
 			fArrNotReady[Define_WaffleState.iPosRed][i] = this.red;
 			fArrNotReady[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrNotReady[Define_WaffleState.iPosBlue][i] = this.blue;
 			Delay.msDelay(1500);
-			motor.vSensorOut(iRotationAngle);
-			iRotationAngle = iRotationAngle + 3;
+			motor.vSensorOut(200);
 		}
 		
 		// Min und Max Werte für die entsprechenden Farben kalkulieren und wegspeichern
