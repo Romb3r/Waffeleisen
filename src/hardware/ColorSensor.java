@@ -28,6 +28,10 @@ public class ColorSensor {
 	// Konstruktoren
 	public ColorSensor() {
 		this.rgb_colors = new float[sensor_mode.sampleSize()];
+		this.fEmptyMinMax = new float[3][10];
+		this.fNotReadyMinMax = new float[3][10];
+		this.fArrEmpty = new float[3][10];
+		this.fArrNotReady = new float[3][10];
 		this.EndSwitchColor_sensor.setCurrentMode(this.EndSwitchColor_sensor.getColorIDMode().getName());
 		this.WaffelStateColor_sensor.setCurrentMode(this.WaffelStateColor_sensor.getRGBMode().getName());
 	}
