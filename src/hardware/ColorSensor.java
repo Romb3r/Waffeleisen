@@ -4,6 +4,7 @@ import lejos.hardware.sensor.SensorMode;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.Color;
 import lejos.hardware.ev3.LocalEV3;
+import lejos.utility.Delay;
 
 import defines.Define_WaffleState;
 
@@ -59,6 +60,7 @@ public class ColorSensor {
 			fArrEmpty[Define_WaffleState.iPosRed][i] = this.red;
 			fArrEmpty[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrEmpty[Define_WaffleState.iPosBlue][i] = this.blue;
+			Delay.msDelay(50);
 		}
 		
 		// Min und Max Werte für die entsprechenden Farben kalkulieren und wegspeichern
@@ -109,6 +111,7 @@ public class ColorSensor {
 			fArrNotReady[Define_WaffleState.iPosRed][i] = this.red;
 			fArrNotReady[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrNotReady[Define_WaffleState.iPosBlue][i] = this.blue;
+			Delay.msDelay(50);
 		}
 		
 		// Min und Max Werte für die entsprechenden Farben kalkulieren und wegspeichern
