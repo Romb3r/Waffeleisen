@@ -15,7 +15,6 @@ public class ColorSensor {
 	private EV3ColorSensor EndSwitchColor_sensor = new EV3ColorSensor(LocalEV3.get().getPort("S1"));
 	private EV3ColorSensor WaffelStateColor_sensor = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
 	private SensorMode sensor_mode = EndSwitchColor_sensor.getRGBMode();
-	private Motor CColorSensorMotor = new Motor();
 	private float rgb_colors[];									// Ergebnis Array für ein Color Fetch vom Sensor
 	private float red;
 	private float green;	
