@@ -28,14 +28,14 @@ public class CalibrationMode extends Mode {
 		System.out.println("Enter zum bestaetigen...");
 		this.base_btn.boButtonPressedBlocking(Button.ID_ENTER);
 		//this.motor.vSensorIn();
-		this.color_sensor.vCalibEmpty(m);
+		this.color_sensor.vCalibEmpty(this.motor);
 		//this.motor.vSensorOut();
 		
 		System.out.println("Rohteig eingefuellt?");
 		System.out.println("Enter zum bestaetigen...");
 		this.base_btn.boButtonPressedBlocking(Button.ID_ENTER);
 		//this.motor.vSensorIn();
-		this.color_sensor.vCalibNotReady(m);
+		this.color_sensor.vCalibNotReady(this.motor);
 		//this.motor.vSensorOut();
 		
 		this.motor.iClose();
