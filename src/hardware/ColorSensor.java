@@ -15,26 +15,23 @@ public class ColorSensor {
 	private EV3ColorSensor EndSwitchColor_sensor = new EV3ColorSensor(LocalEV3.get().getPort("S1"));
 	private EV3ColorSensor WaffelStateColor_sensor = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
 	private SensorMode sensor_mode = EndSwitchColor_sensor.getRGBMode();
-	private float rgb_colors[];									// Ergebnis Array für ein Color Fetch vom Sensor
-	private float red;
-	private float green;	
-	private float blue;
+	private float rgb_colors[];									// Ergebnis Array fuer ein Color Fetch vom Sensor
+	private float red;											// \
+	private float green;										//  Hier werden die Einzelfarben des Arrays rgb_colors abgespeichert
+	private float blue;											// /
 	
-	private float[][] fEmptyMinMax;								// Ergebnis Array für die unterschiedlichen RGB Werte im Fall Empty (Waffeleisen nicht befuellt)
-	private float[][] fNotReadyMinMax;							// Ergebnis Array für die unterschiedlichen RGB Werte im Fall NotReady (Teig ist roh)
-	
-	private static float[][] fArrEmpty;							// Dieses Array nimmt die Messwerte im Falle Empty auf
-	private static float[][] fArrNotReady;						// Dieses Array nimmt die Messwerte im Falle NotReady auf
+	private float[][] fEmptyMinMax;								// Ergebnis Array fuer die unterschiedlichen RGB Werte im Fall Empty (Waffeleisen nicht befuellt) fuer die Kalibrierung
+	private float[][] fNotReadyMinMax;							// Ergebnis Array fuer die unterschiedlichen RGB Werte im Fall NotReady (Teig ist roh) fuer die Kalibrierung
+	private static float[][] fArrCalibValues;					// Dieses Array nimmt die Messwerte auf die benutzt werden zum kalibrieren
 	
 	// Konstruktoren
 	public ColorSensor() {
 		this.rgb_colors = new float[sensor_mode.sampleSize()];
 		this.fEmptyMinMax = new float[3][2];
 		this.fNotReadyMinMax = new float[3][2];
-		this.fArrEmpty = new float[3][Define_WaffleState.iNumCalibSteps];
-		this.fArrNotReady = new float[3][Define_WaffleState.iNumCalibSteps];
 		this.EndSwitchColor_sensor.setCurrentMode(this.EndSwitchColor_sensor.getColorIDMode().getName());
 		this.WaffelStateColor_sensor.setCurrentMode(this.WaffelStateColor_sensor.getRGBMode().getName());
+		fArrCalibValues = new float[3][Define_WaffleState.iNumCalibSteps];
 	}
 	
 	// Oeffentliche Methoden
@@ -59,108 +56,116 @@ public class ColorSensor {
 	}
 	
 	public void vCalibEmpty(Motor motor) {
-		// Messungen machen
+		/*
+		 * Macht eine definierte Anzahl von Messungen fuer keinen Teig im Waffeleisen (Empty)
+		 * Ermittelt Min und Max Werte fuer die verschiedenen RGB Werte
+		 */
 		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			motor.vSensorIn(200);
-			this.vFetchSampleWaffleState();
-			fArrEmpty[Define_WaffleState.iPosRed][i] = this.red;
-			fArrEmpty[Define_WaffleState.iPosGreen][i] = this.green;
-			fArrEmpty[Define_WaffleState.iPosBlue][i] = this.blue;
-			Delay.msDelay(1500);
-			motor.vSensorOut(200);
+			motor.vSensorIn(200);																			// Farbsensor in das Waffeleisen einfahren (Winkel: 200)
+			this.vFetchSampleWaffleState();																	// Eine Messung machen
+			fArrCalibValues[Define_WaffleState.iPosRed][i] = this.red;										// Rot Wert an Stelle [rot][i] speichern
+			fArrCalibValues[Define_WaffleState.iPosGreen][i] = this.green;									// Gruen Wert an Stelle [gruen][i] speichern
+			fArrCalibValues[Define_WaffleState.iPosBlue][i] = this.blue;									// Blau Wert an Stelle [blau][i] speichern
+			Delay.msDelay(500);																				// 0.5s Delay um Mechanik zu schonen
+			motor.vSensorOut(200);																			// Farbsensor aus dem Waffeleisen fahren (Winkel: 200)
+			Delay.msDelay(500);																				// 0.5s Delay um Mechanik zu schonen
 		}
 		
 		// Min und Max Werte für die entsprechenden Farben kalkulieren und wegspeichern
-		float fMin = fArrEmpty[Define_WaffleState.iPosRed][0];
-		float fMax = fArrEmpty[Define_WaffleState.iPosRed][0];
-		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			if(fArrEmpty[Define_WaffleState.iPosRed][i] < fMin) {
-				fMin = fArrEmpty[Define_WaffleState.iPosRed][i];
-			}
-			if(fArrEmpty[Define_WaffleState.iPosRed][i] > fMax) {
-				fMax = fArrEmpty[Define_WaffleState.iPosRed][i];
-			}
+		float fMin = fArrCalibValues[Define_WaffleState.iPosRed][0];										// \
+		float fMax = fArrCalibValues[Define_WaffleState.iPosRed][0];										//  \
+		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {										//   \
+			if(fArrCalibValues[Define_WaffleState.iPosRed][i] < fMin) {										//    \
+				fMin = fArrCalibValues[Define_WaffleState.iPosRed][i];										//     Min und Max Wert fuer Rot Emmpty ermitteln
+			}																								//    /
+			if(fArrCalibValues[Define_WaffleState.iPosRed][i] > fMax) {										//   /
+				fMax = fArrCalibValues[Define_WaffleState.iPosRed][i];										//  /
+			}																				
 		}
-		this.fEmptyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMax] = fMax;					// Abspeichern der Max & Min Werte für Rot im Zustand Empty (Kein Teig im Eisen)
-		this.fEmptyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMin] = fMin;
+		this.fEmptyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMax] = fMax;					//  Abspeichern der Max & Min Werte fuer Rot im Zustand Empty (Kein Teig im Eisen)
+		this.fEmptyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMin] = fMin;					// /
 		
-		fMin = fArrEmpty[Define_WaffleState.iPosGreen][0];
-		fMax = fArrEmpty[Define_WaffleState.iPosGreen][0];
-		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			if(fArrEmpty[Define_WaffleState.iPosGreen][i] < fMin) {
-				fMin = fArrEmpty[Define_WaffleState.iPosGreen][i];
-			}
-			if(fArrEmpty[Define_WaffleState.iPosGreen][i] > fMax) {
-				fMax = fArrEmpty[Define_WaffleState.iPosGreen][i];
+		fMin = fArrCalibValues[Define_WaffleState.iPosGreen][0];											// \
+		fMax = fArrCalibValues[Define_WaffleState.iPosGreen][0];											//  \
+		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {										//   \
+			if(fArrCalibValues[Define_WaffleState.iPosGreen][i] < fMin) {									//    \
+				fMin = fArrCalibValues[Define_WaffleState.iPosGreen][i];									//     Min und Max Werte fuer Gruen Empty ermittlen
+			}																								//    /
+			if(fArrCalibValues[Define_WaffleState.iPosGreen][i] > fMax) {									//   /
+				fMax = fArrCalibValues[Define_WaffleState.iPosGreen][i];									//  /
 			}
 		}
 		this.fEmptyMinMax[Define_WaffleState.iPosGreen][Define_WaffleState.iPosMax] = fMax;					// Abspeichern der Max & Min Werte für Rot im Zustand Empty (Kein Teig im Eisen)
 		this.fEmptyMinMax[Define_WaffleState.iPosGreen][Define_WaffleState.iPosMin] = fMin;
 		
-		fMin = fArrEmpty[Define_WaffleState.iPosBlue][0];
-		fMax = fArrEmpty[Define_WaffleState.iPosBlue][0];
-		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			if(fArrEmpty[Define_WaffleState.iPosBlue][i] < fMin) {
-				fMin = fArrEmpty[Define_WaffleState.iPosBlue][i];
-			}
-			if(fArrEmpty[Define_WaffleState.iPosBlue][i] > fMax) {
-				fMax = fArrEmpty[Define_WaffleState.iPosBlue][i];
+		fMin = fArrCalibValues[Define_WaffleState.iPosBlue][0];												// \
+		fMax = fArrCalibValues[Define_WaffleState.iPosBlue][0];												//  \
+		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {										//   \
+			if(fArrCalibValues[Define_WaffleState.iPosBlue][i] < fMin) {									//    \
+				fMin = fArrCalibValues[Define_WaffleState.iPosBlue][i];										//     Min und Max Werte fuer Blau Empty ermittlen
+			}																								//    /
+			if(fArrCalibValues[Define_WaffleState.iPosBlue][i] > fMax) {									//   /
+				fMax = fArrCalibValues[Define_WaffleState.iPosBlue][i];										//  /
 			}
 		}
-		this.fEmptyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMax] = fMax;					// Abspeichern der Max & Min Werte für Rot im Zustand Empty (Kein Teig im Eisen)
+		this.fEmptyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMax] = fMax;					// Abspeichern der Max & Min Werte fuer Rot im Zustand Empty (Kein Teig im Eisen)
 		this.fEmptyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMin] = fMin;	
 	}
 	
 	public void vCalibNotReady(Motor motor) {
-		// Messungen machen
+		/*
+		 * Macht eine definierte Anzahl von Messungen fuer einen rohen Teig im Waffeleisen (NotReady)
+		 * Ermittelt Min und Max Werte fuer die verschiedenen RGB Werte
+		 */
 		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			motor.vSensorIn(200);
-			this.vFetchSampleWaffleState();
-			fArrNotReady[Define_WaffleState.iPosRed][i] = this.red;
-			fArrNotReady[Define_WaffleState.iPosGreen][i] = this.green;
-			fArrNotReady[Define_WaffleState.iPosBlue][i] = this.blue;
-			Delay.msDelay(1500);
-			motor.vSensorOut(200);
+			motor.vSensorIn(200);																			// Farbsensor in das Waffeleisen einfahren (Winkel: 200)
+			this.vFetchSampleWaffleState();																	// Eine Messung machen
+			fArrCalibValues[Define_WaffleState.iPosRed][i] = this.red;										// Rot Wert an Stelle [rot][i] speichern
+			fArrCalibValues[Define_WaffleState.iPosGreen][i] = this.green;									// Gruen Wert an Stelle [gruen][i] speichern
+			fArrCalibValues[Define_WaffleState.iPosBlue][i] = this.blue;									// Blau Wert an Stelle [blau][i] speichern
+			Delay.msDelay(500);																				// 0.5s Delay um Mechanik zu schonen
+			motor.vSensorOut(200);																			// Farbsensor aus dem Waffeleisen fahren (Winkel: 200)
+			Delay.msDelay(500);																				// 0.5s Delay um Mechanik zu schonen
 		}
 		
 		// Min und Max Werte für die entsprechenden Farben kalkulieren und wegspeichern
-		float fMin = fArrNotReady[Define_WaffleState.iPosRed][0];
-		float fMax = fArrNotReady[Define_WaffleState.iPosRed][0];
-		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			if(fArrNotReady[Define_WaffleState.iPosRed][i] < fMin) {
-				fMin = fArrNotReady[Define_WaffleState.iPosRed][i];
-			}
-			if(fArrNotReady[Define_WaffleState.iPosRed][i] > fMax) {
-				fMax = fArrNotReady[Define_WaffleState.iPosRed][i];
-			}
+		float fMin = fArrCalibValues[Define_WaffleState.iPosRed][0];										// \
+		float fMax = fArrCalibValues[Define_WaffleState.iPosRed][0];										//  \
+		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {										//   \
+			if(fArrCalibValues[Define_WaffleState.iPosRed][i] < fMin) {										//    \
+				fMin = fArrCalibValues[Define_WaffleState.iPosRed][i];										//     Min und Max Wert fuer Rot NotReady ermitteln
+			}																								//    /
+			if(fArrCalibValues[Define_WaffleState.iPosRed][i] > fMax) {										//   /
+				fMax = fArrCalibValues[Define_WaffleState.iPosRed][i];										//  /
+			}																				
 		}
-		this.fNotReadyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMax] = fMax;					// Abspeichern der Max & Min Werte für Rot im Zustand Empty (Kein Teig im Eisen)
+		this.fNotReadyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMax] = fMax;				// Abspeichern der Max & Min Werte fuer Rot im Zustand NotReady (Teig roh)
 		this.fNotReadyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMin] = fMin;
 		
-		fMin = fArrNotReady[Define_WaffleState.iPosGreen][0];
-		fMax = fArrNotReady[Define_WaffleState.iPosGreen][0];
-		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			if(fArrNotReady[Define_WaffleState.iPosGreen][i] < fMin) {
-				fMin = fArrNotReady[Define_WaffleState.iPosGreen][i];
-			}
-			if(fArrNotReady[Define_WaffleState.iPosGreen][i] > fMax) {
-				fMax = fArrNotReady[Define_WaffleState.iPosGreen][i];
+		fMin = fArrCalibValues[Define_WaffleState.iPosGreen][0];											// \
+		fMax = fArrCalibValues[Define_WaffleState.iPosGreen][0];											//  \
+		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {										//   \
+			if(fArrCalibValues[Define_WaffleState.iPosGreen][i] < fMin) {									//    \
+				fMin = fArrCalibValues[Define_WaffleState.iPosGreen][i];									//     Min und Max Werte fuer Gruen NotReady ermittlen
+			}																								//    /
+			if(fArrCalibValues[Define_WaffleState.iPosGreen][i] > fMax) {									//   /
+				fMax = fArrCalibValues[Define_WaffleState.iPosGreen][i];									//  /
 			}
 		}
-		this.fNotReadyMinMax[Define_WaffleState.iPosGreen][Define_WaffleState.iPosMax] = fMax;					// Abspeichern der Max & Min Werte für Rot im Zustand Empty (Kein Teig im Eisen)
+		this.fNotReadyMinMax[Define_WaffleState.iPosGreen][Define_WaffleState.iPosMax] = fMax;				// Abspeichern der Max & Min Werte für Gruen im Zustand NotReady (Teig roh)
 		this.fNotReadyMinMax[Define_WaffleState.iPosGreen][Define_WaffleState.iPosMin] = fMin;
 		
-		fMin = fArrNotReady[Define_WaffleState.iPosBlue][0];
-		fMax = fArrNotReady[Define_WaffleState.iPosBlue][0];
-		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			if(fArrNotReady[Define_WaffleState.iPosBlue][i] < fMin) {
-				fMin = fArrNotReady[Define_WaffleState.iPosBlue][i];
-			}
-			if(fArrNotReady[Define_WaffleState.iPosBlue][i] > fMax) {
-				fMax = fArrNotReady[Define_WaffleState.iPosBlue][i];
+		fMin = fArrCalibValues[Define_WaffleState.iPosBlue][0];												// \
+		fMax = fArrCalibValues[Define_WaffleState.iPosBlue][0];												//  \
+		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {										//   \
+			if(fArrCalibValues[Define_WaffleState.iPosBlue][i] < fMin) {									//    \
+				fMin = fArrCalibValues[Define_WaffleState.iPosBlue][i];										//     Min und Max Werte fuer Blau NotReady ermittlen
+			}																								//    /
+			if(fArrCalibValues[Define_WaffleState.iPosBlue][i] > fMax) {									//   /
+				fMax = fArrCalibValues[Define_WaffleState.iPosBlue][i];										//  /
 			}
 		}
-		this.fNotReadyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMax] = fMax;					// Abspeichern der Max & Min Werte für Rot im Zustand Empty (Kein Teig im Eisen)
+		this.fNotReadyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMax] = fMax;				// Abspeichern der Max & Min Werte fuer Rot im Zustand NotReady (Teig roh)
 		this.fNotReadyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMin] = fMin;	
 	}
 
@@ -170,13 +175,16 @@ public class ColorSensor {
 		if((this.red >= this.fEmptyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMin]) && (this.red <= this.fEmptyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMax]) &&
 		   (this.green >= this.fEmptyMinMax[Define_WaffleState.iPosGreen][Define_WaffleState.iPosMin]) && (this.green <= this.fEmptyMinMax[Define_WaffleState.iPosGreen][Define_WaffleState.iPosMax]) &&
 		   (this.blue >= this.fEmptyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMin]) && (this.blue <= this.fEmptyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMax])) {
+			// Wenn rot, gruen und blau innerhalb der Min & Max Werte fuer den Fall Empty liegen, gebe iEmpty zurueck
 			return Define_WaffleState.iEmpty;
 		}
 		else if((this.red >= this.fNotReadyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMin]) && (this.red <= this.fNotReadyMinMax[Define_WaffleState.iPosRed][Define_WaffleState.iPosMax]) &&
 				(this.green >= this.fNotReadyMinMax[Define_WaffleState.iPosGreen][Define_WaffleState.iPosMin]) && (this.green <= this.fNotReadyMinMax[Define_WaffleState.iPosGreen][Define_WaffleState.iPosMax]) &&
 				(this.blue >= this.fNotReadyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMin]) && (this.blue <= this.fNotReadyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMax])) {
+			// Wenn rot, gruen und blau innerhalb der Min & Max Werte fuer den Fall NotReady liegen, gebe iNotReady zurueck
 			return Define_WaffleState.iNotReady;
 		}
+		// Sonst gebe iReady zurueck
 		return Define_WaffleState.iReady;
 	}
 	

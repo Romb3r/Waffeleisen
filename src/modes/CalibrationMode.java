@@ -8,10 +8,8 @@ import hardware.Motor;
 import lejos.hardware.Button;
 
 public class CalibrationMode extends Mode {
-	private ColorSensor color_sensor;
-	private Motor motor;
-	private BaseButton base_btn;
 	
+	// Konstruktoren
 	public CalibrationMode(ColorSensor cs, Motor m, BaseButton bs) {
 		this.color_sensor = cs;
 		this.motor = m;
@@ -20,40 +18,46 @@ public class CalibrationMode extends Mode {
 		this.sName = "Kalibrierungs Modus";
 	}
 	
+	// Oeffentliche Methoden
 	public void vRoutine() {
-		this.motor.iOpen();
+		/*
+		 * Routine fuer die Kalibrierung des Farbsensors
+		 * Dieser Sensor soll den Wafflestate auslesen
+		 */
+		this.motor.iOpen();														// Oeffne Waffeleisen
 		this.vStopMotor(true);
 		
 		System.out.println("Waffeleisen leer?");
 		System.out.println("Enter zum bestaetigen...");
-		this.base_btn.boButtonPressedBlocking(Button.ID_ENTER);
-		//this.motor.vSensorIn();
-		this.color_sensor.vCalibEmpty(this.motor);
-		//this.motor.vSensorOut();
+		this.base_btn.boButtonPressedBlocking(Button.ID_ENTER);					// Warte bis ENTER gedrueckt wurde
+		this.color_sensor.vCalibEmpty(this.motor);								// Mache die Kalibrierung fuer den Empty Fall (Kein Teig im Waffeleisen)
 		
 		System.out.println("Rohteig eingefuellt?");
 		System.out.println("Enter zum bestaetigen...");
-		this.base_btn.boButtonPressedBlocking(Button.ID_ENTER);
-		//this.motor.vSensorIn();
-		this.color_sensor.vCalibNotReady(this.motor);
-		//this.motor.vSensorOut();
+		this.base_btn.boButtonPressedBlocking(Button.ID_ENTER);					// Warte bis ENTER gedrueckt wurde
+		this.color_sensor.vCalibNotReady(this.motor);							// Mache die Kalibrierung fuer den NotReady Fall (Teig ist roh)
 		
-		this.motor.iClose();
+		this.motor.iClose();													// Schliesse Waffeleisen
 		this.vStopMotor(false);
 	}
 	
 	public void vStopMotor(boolean boCheckWhenOpen) {
+		/*
+		 * Halte die Motore an, wenn der Farbsensor die entsprechende Endmarkierung detektiert
+		 * boCheckWhenOpen: True  -> Waffeleisen soll sich oeffnen und aufhoeren wenn geoeffnet
+		 *                  False -> Waffeleisen soll sich schliessen und aufhoeren wenn geschlossen
+		 */
 		while (this.motor.getLeftMotor().isMoving() &&				// Solange beide Motoren drehen
 			   this.motor.getRightMotor().isMoving())
 		{	
-			if(boCheckWhenOpen) {									// Abhaengig der Uebergabe, pruefe ob Waffeleisen geschlossen oder geoeffnet
+			if(boCheckWhenOpen) {
 				if(this.color_sensor.boIsOpen()) {					// Wenn Waffeleisen geoeffnet, stoppe beide Motoren
 					this.motor.getLeftMotor().stop();
 					this.motor.getRightMotor().stop();
 				}
 			}
-			else if(!boCheckWhenOpen) {								// Abhaengig der Uebergabe, pruefe ob Waffeleisen geschlossen oder geoeffnet
-				if(this.color_sensor.boIsClosed()) {				// Wenn Waffeleisen geoeffnet, stoppe beide Motoren
+			else if(!boCheckWhenOpen) {
+				if(this.color_sensor.boIsClosed()) {				// Wenn Waffeleisen geschlossen, stoppe beide Motoren
 					this.motor.getLeftMotor().stop();
 					this.motor.getRightMotor().stop();
 				}

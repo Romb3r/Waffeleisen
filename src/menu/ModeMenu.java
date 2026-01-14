@@ -37,7 +37,7 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 		this.vZeigeTxt("mitte -> Automatikbetrieb");
 		this.vZeigeTxt("unten -> Kalibrierung");
 		
-		this.vSetMode();								// Funktionsaufruf um den Modus auszuwaehlen
+		this.vSetMode();												// Funktionsaufruf um den Modus auszuwaehlen
 		
 		switch(this.iMode)
         {
@@ -47,13 +47,13 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	        	break;
 	        		
 	        case 1: 
-	        	this.vZeigeTxt("Taste: Pfeil oben"); 	// --> Pfeil oben
+	        	this.vZeigeTxt("Taste: Pfeil oben"); 					// --> Pfeil oben
 	        	this.vZeigeTxt("Modus manueller Betrieb gewaehlt!"); 	// - manueller Betrieb = Motor kann spaeter ueber Tasten angesteuert werden
 	        	break;
 	        		
 	        case 2: 
-	        	this.vZeigeTxt("Taste: Mitte "); 	// --> mittelere Taste
-	        	this.vZeigeTxt("Modus Automatik gewaehlt!"); 	// - Automatikbetrieb = mach eine Waffel...
+	        	this.vZeigeTxt("Taste: Mitte "); 						// --> mittelere Taste
+	        	this.vZeigeTxt("Modus Automatik gewaehlt!"); 			// - Automatikbetrieb = mach eine Waffel...
 	        	break;
 	        		
 	        case Button.ID_ESCAPE: 
@@ -63,8 +63,8 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	        	break;
 	        		
 	        case Button.ID_DOWN: 
-	        	this.vZeigeTxt("Taste: Pfeil unten"); 	// --> Pfeil unten
-	        	this.vZeigeTxt("Modus Kalibrierung gewaehlt!"); 	// - Kalibrierung = Kalibiere Farbsensor um zwischen leeren Waffeleisen und rohem Teig zu unterscheiden 
+	        	this.vZeigeTxt("Taste: Pfeil unten"); 					// --> Pfeil unten
+	        	this.vZeigeTxt("Modus Kalibrierung gewaehlt!"); 		// - Kalibrierung = Kalibiere Farbsensor um zwischen leeren Waffeleisen und rohem Teig zu unterscheiden 
 	        	break;
 	        		
 	        case 5: 
@@ -72,10 +72,10 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	        	break;
 	        		
 	        default: 
-	        	this.vZeigeTxt("Unbekannte Taste");		// --> Pfeil rechts, Pfeil links und oben links 
+	        	this.vZeigeTxt("Unbekannte Taste");						// --> Pfeil rechts, Pfeil links und oben links 
 	        	break;
         }
-		Button.waitForAnyPress();	// damit Text nicht vorzeitig verschwindet
+		Button.waitForAnyPress();										// damit Text nicht vorzeitig verschwindet
 	}
 	
 	public boolean boGetExitProgramm() {

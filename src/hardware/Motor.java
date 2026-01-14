@@ -22,10 +22,6 @@ public class Motor {
 		CMotorState.setSpeed(200);
 	}
 	
-	public Motor() {
-		
-	}
-	
 	// oeffentliche Methoden
 	public int iOpen() {
 	/*
@@ -56,7 +52,7 @@ public class Motor {
 	/*
 	 * Sensor faehrt aus dem Werkzeug heraus, auf Grundstellung
 	 */
-		CMotorState.rotate(-1*iAngle);																					// Fahre Sensor wieder aus dem Waffeleisen raus
+		CMotorState.rotate(-1*iAngle);																				// Fahre Sensor wieder aus dem Waffeleisen raus
 	}
 	
 	public EV3LargeRegulatedMotor getLeftMotor() {

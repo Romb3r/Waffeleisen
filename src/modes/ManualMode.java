@@ -9,9 +9,6 @@ import lejos.hardware.Button;
 
 
 public class ManualMode extends Mode {
-	private Motor motor;
-	private BaseButton base_btn;
-	private ColorSensor color_sensor;
 	
 	// Konstruktoren
 	public ManualMode(Motor m, BaseButton bs, ColorSensor cs) {
@@ -22,7 +19,7 @@ public class ManualMode extends Mode {
 		this.sName = "Manueller Modus";
 	}
 	
-	// private Methoden
+	// oeffentliche Methoden
 	public void vRoutine() {
 	/*
 	 * Routinen Ablauf des Manuellen Modus
