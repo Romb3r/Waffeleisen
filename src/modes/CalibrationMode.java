@@ -26,14 +26,14 @@ public class CalibrationMode extends Mode {
 		
 		System.out.println("Waffeleisen leer?");
 		System.out.println("Enter zum bestaetigen...");
-		this.base_btn.boButtonPressed(Button.ID_ENTER);
+		this.base_btn.boButtonPressedBlocking(Button.ID_ENTER);
 		this.motor.vSensorIn();
 		this.color_sensor.vCalibEmpty();
 		this.motor.vSensorOut();
 		
 		System.out.println("Rohteig eingefuellt?");
 		System.out.println("Enter zum bestaetigen...");
-		this.base_btn.boButtonPressed(Button.ID_ENTER);
+		this.base_btn.boButtonPressedBlocking(Button.ID_ENTER);
 		this.motor.vSensorIn();
 		this.color_sensor.vCalibNotReady();
 		this.motor.vSensorOut();
