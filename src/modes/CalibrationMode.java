@@ -22,6 +22,7 @@ public class CalibrationMode extends Mode {
 	
 	public void vRoutine() {
 		this.motor.iOpen();
+		this.vStopMotor(false);
 		
 		System.out.println("Waffeleisen leer?");
 		System.out.println("Enter zum bestaetigen...");
@@ -38,5 +39,25 @@ public class CalibrationMode extends Mode {
 		this.motor.vSensorOut();
 		
 		this.motor.iClose();
+		this.vStopMotor(false);
+	}
+	
+	public void vStopMotor(boolean boCheckWhenOpen) {
+		while (this.motor.getLeftMotor().isMoving() &&				// Solange beide Motoren drehen
+			   this.motor.getRightMotor().isMoving())
+		{	
+			if(boCheckWhenOpen) {									// Abhaengig der Uebergabe, pruefe ob Waffeleisen geschlossen oder geoeffnet
+				if(this.color_sensor.boIsOpen()) {					// Wenn Waffeleisen geoeffnet, stoppe beide Motoren
+					this.motor.getLeftMotor().stop();
+					this.motor.getRightMotor().stop();
+				}
+			}
+			else if(!boCheckWhenOpen) {								// Abhaengig der Uebergabe, pruefe ob Waffeleisen geschlossen oder geoeffnet
+				if(this.color_sensor.boIsClosed()) {				// Wenn Waffeleisen geoeffnet, stoppe beide Motoren
+					this.motor.getLeftMotor().stop();
+					this.motor.getRightMotor().stop();
+				}
+			}
+		}
 	}
 }
