@@ -22,6 +22,10 @@ public class Motor {
 		CMotorState.setSpeed(200);
 	}
 	
+	public Motor() {
+		
+	}
+	
 	// oeffentliche Methoden
 	public int iOpen() {
 	/*
@@ -41,18 +45,18 @@ public class Motor {
 		return Define_Hardware.iMotorClosed;
 	}
 	
-	public void vSensorIn() {
+	public void vSensorIn(int iAngle) {
 	/*
 	 * Sensor faehrt ins Werkzeug ein, zum WaffelStateCheck
 	 */
-		CMotorState.rotate(200);																					// Fahre Sensor in das Waffeleisen
+		CMotorState.rotate(iAngle);																					// Fahre Sensor in das Waffeleisen
 	}
 	
-	public void vSensorOut() {
+	public void vSensorOut(int iAngle) {
 	/*
 	 * Sensor faehrt aus dem Werkzeug heraus, auf Grundstellung
 	 */
-		CMotorState.rotate(-1*200);																					// Fahre Sensor wieder aus dem Waffeleisen raus
+		CMotorState.rotate(-1*iAngle);																					// Fahre Sensor wieder aus dem Waffeleisen raus
 	}
 	
 	public EV3LargeRegulatedMotor getLeftMotor() {

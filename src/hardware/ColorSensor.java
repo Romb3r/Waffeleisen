@@ -7,6 +7,7 @@ import lejos.hardware.ev3.LocalEV3;
 import lejos.utility.Delay;
 
 import defines.Define_WaffleState;
+import hardware.Motor;
 
 
 public class ColorSensor {
@@ -14,6 +15,7 @@ public class ColorSensor {
 	private EV3ColorSensor EndSwitchColor_sensor = new EV3ColorSensor(LocalEV3.get().getPort("S1"));
 	private EV3ColorSensor WaffelStateColor_sensor = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
 	private SensorMode sensor_mode = EndSwitchColor_sensor.getRGBMode();
+	private Motor CColorSensorMotor = new Motor();
 	private float rgb_colors[];									// Ergebnis Array für ein Color Fetch vom Sensor
 	private float red;
 	private float green;	
@@ -59,12 +61,16 @@ public class ColorSensor {
 	
 	public void vCalibEmpty() {
 		// Messungen machen
+		int iRotationAngle = 187;
 		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
+			this.CColorSensorMotor.vSensorIn(iRotationAngle);
 			this.vFetchSampleWaffleState();
 			fArrEmpty[Define_WaffleState.iPosRed][i] = this.red;
 			fArrEmpty[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrEmpty[Define_WaffleState.iPosBlue][i] = this.blue;
-			Delay.msDelay(10);
+			Delay.msDelay(1500);
+			this.CColorSensorMotor.vSensorOut(iRotationAngle);
+			iRotationAngle = iRotationAngle + 3;
 		}
 		
 		// Min und Max Werte für die entsprechenden Farben kalkulieren und wegspeichern
@@ -110,12 +116,16 @@ public class ColorSensor {
 	
 	public void vCalibNotReady() {
 		// Messungen machen
+		int iRotationAngle = 187;
 		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
+			this.CColorSensorMotor.vSensorIn(iRotationAngle);
 			this.vFetchSampleWaffleState();
 			fArrNotReady[Define_WaffleState.iPosRed][i] = this.red;
 			fArrNotReady[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrNotReady[Define_WaffleState.iPosBlue][i] = this.blue;
-			Delay.msDelay(10);
+			Delay.msDelay(1500);
+			this.CColorSensorMotor.vSensorIn(iRotationAngle);
+			iRotationAngle = iRotationAngle + 3;
 		}
 		
 		// Min und Max Werte für die entsprechenden Farben kalkulieren und wegspeichern

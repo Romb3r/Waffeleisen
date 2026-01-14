@@ -44,19 +44,19 @@ public class AutoMode extends Mode {
 					this.vStopMotor(true);																						// Stoppe Motor, wenn Waffeleiesen geoeffnet
 				}
 				do {		
-					this.motor.vSensorIn();																						// Waffle State Sensor reinfahren
+					this.motor.vSensorIn(200);																						// Waffle State Sensor reinfahren
 
 					iWaffleState = this.color_sensor.iEvalWaffleState();														// Pruefe Waffle State
 					if(iWaffleState == Define_WaffleState.iEmpty) {
 						System.out.println("Teig einfuellen!");
-						this.motor.vSensorOut();
+						this.motor.vSensorOut(200);
 						boRun = !this.base_btn.boButtonPressedBlockingTimeout(Button.ID_ESCAPE, Define_Timer.iFillUpTime);		// Wenn Stop Knopf gedrueckt wurde, liefert die Funktion true zurueck, allerdings soll dann der Automatikmodus abgebrochen werden, also invertieren mit "!"
 						if(!boRun) {
 							break;																								// Verlasse Do while Schleife
 						}
 					}	
 				} while (iWaffleState == Define_WaffleState.iEmpty);															// Wiederhole Do While Schleife wenn kein Teig vorhanden 																						// Waffle State Sensor wieder rausfahren
-				this.motor.vSensorOut();
+				this.motor.vSensorOut(200);
 				if(iWaffleState == Define_WaffleState.iNotReady) {
 					this.iMotorState = this.motor.iClose();															// Schliesse Waffeleisen
 					this.vStopMotor(false);																			// Stoppe Motor, wenn Waffeleisen geschlossen
@@ -67,9 +67,9 @@ public class AutoMode extends Mode {
 						this.iMotorState = this.motor.iOpen();																							// Oeffne Waffeleisen
 						this.vStopMotor(true); 																						// Stoppe Motor, wenn Waffeleisen geoeffnet
 						
-						this.motor.vSensorIn(); 																					// Bringe Sensor fuer die Ueberpruefung des Waffle States in Position
+						this.motor.vSensorIn(200); 																					// Bringe Sensor fuer die Ueberpruefung des Waffle States in Position
 						iWaffleState = this.color_sensor.iEvalWaffleState();														// Werte aus, ob Teig fertig, wenn ja gehe aus der Schleife raus
-						this.motor.vSensorOut(); 																					// Fahre Sensor zurueck in Position
+						this.motor.vSensorOut(200); 																					// Fahre Sensor zurueck in Position
 						if(iWaffleState == Define_WaffleState.iReady) {
 							break;
 						}
