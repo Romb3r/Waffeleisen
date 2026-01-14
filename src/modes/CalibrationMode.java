@@ -22,7 +22,7 @@ public class CalibrationMode extends Mode {
 	
 	public void vRoutine() {
 		this.motor.iOpen();
-		this.vStopMotor(false);
+		this.vStopMotor(true);
 		
 		System.out.println("Waffeleisen leer?");
 		System.out.println("Enter zum bestaetigen...");
