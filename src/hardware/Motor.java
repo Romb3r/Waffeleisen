@@ -26,6 +26,7 @@ public class Motor {
 	public int iOpen() {
 	/*
 	 * Steuert den Motor so an, dass das Waffeleisen geoeffnet wird
+	 * Gibt integer ueber den Status der Motoren zurueck
 	 */
 		CMotorLeft.forward();																						// Linker Motor vorwaerts
 		CMotorRight.forward();																						// Rechter Motor vorwaerts
@@ -35,6 +36,7 @@ public class Motor {
 	public int iClose() {
 	/*
 	 * Steuert den Motor so an, dass das Waffeleisen geschlossen wird 
+	 * Gibt integer ueber den Status der Motoren zurueck
 	 */
 		CMotorLeft.backward();																						// Linker Motor rueckwaerts
 		CMotorRight.backward();																						// Rechter Motor rueckwarts

@@ -42,23 +42,22 @@ public class AutoMode extends Mode {
 				}
 				do {		
 					this.motor.vSensorIn(200);																					// Waffle State Sensor reinfahren
-
 					iWaffleState = this.color_sensor.iEvalWaffleState();														// Pruefe Waffle State
 					if(iWaffleState == Define_WaffleState.iEmpty) {
 						System.out.println("Teig einfuellen!");
-						this.motor.vSensorOut(200);
+						this.motor.vSensorOut(200);																				// Waffle State Sensor wieder herausfahren
 						boRun = !this.base_btn.boButtonPressedBlockingTimeout(Button.ID_ESCAPE, Define_Timer.iFillUpTime);		// Wenn Stop Knopf gedrueckt wurde, liefert die Funktion true zurueck, allerdings soll dann der Automatikmodus abgebrochen werden, also invertieren mit "!"
 						if(!boRun) {
 							break;																								// Verlasse Do while Schleife
 						}
 					}	
 				} while (iWaffleState == Define_WaffleState.iEmpty);															// Wiederhole Do While Schleife wenn kein Teig vorhanden 																						// Waffle State Sensor wieder rausfahren
-				this.motor.vSensorOut(200);
-				if(iWaffleState == Define_WaffleState.iNotReady) {
+				this.motor.vSensorOut(200);																						// An dieser Stelle ist der Sensor noch im Eisen, also herausfahren
+				if(iWaffleState == Define_WaffleState.iNotReady) {																// Wenn der Teig roh ist
 					this.iMotorState = this.motor.iClose();																		// Schliesse Waffeleisen
 					this.vStopMotor(false);																						// Stoppe Motor, wenn Waffeleisen geschlossen
 				}
-				if(iWaffleState == Define_WaffleState.iNotReady) {																	
+				if(iWaffleState == Define_WaffleState.iNotReady) {																// Wenn der Teig roh ist	
 					while (true) {																								// Laufe bis break	
 						vCook(Define_Timer.iBakeTimeMS);																		// Waffeleisen zu: Backe Teig	
 						this.iMotorState = this.motor.iOpen();																	// Oeffne Waffeleisen
@@ -67,10 +66,10 @@ public class AutoMode extends Mode {
 						this.motor.vSensorIn(200); 																				// Bringe Sensor fuer die Ueberpruefung des Waffle States in Position
 						iWaffleState = this.color_sensor.iEvalWaffleState();													// Werte aus, ob Teig fertig, wenn ja gehe aus der Schleife raus
 						this.motor.vSensorOut(200); 																			// Fahre Sensor zurueck in Position
-						if(iWaffleState == Define_WaffleState.iReady) {
-							break;
+						if(iWaffleState == Define_WaffleState.iReady) {															// Wenn Teig fertig
+							break;																								// Breche while Schleife ab und gehe in das naechste if
 						}
-						else {
+						else {																									// Wenn Teig noch nicht fertig
 							this.iMotorState = this.motor.iClose(); 															// Schliesse Waffeleisen um weiter zu backen
 							this.vStopMotor(false); 																			// Stoppe Motor, wenn Waffeleisen geschlossen
 							System.out.println("Weiterbacken!");
@@ -78,9 +77,9 @@ public class AutoMode extends Mode {
 						}
 					}
 				}
-				if(iWaffleState == Define_WaffleState.iReady) {
-					if(this.iMotorState == Define_Hardware.iMotorClosed) {
-						this.motor.iOpen();
+				if(iWaffleState == Define_WaffleState.iReady) {																	// Wenn der Teig fertig ist
+					if(this.iMotorState == Define_Hardware.iMotorClosed) {														// Und der Motor geschlossen ist
+						this.motor.iOpen();																						// Oeffne das Waffeleisen
 						this.vStopMotor(false);
 					}
 					System.out.println("Waffel fertig!");

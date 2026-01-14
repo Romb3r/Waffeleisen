@@ -76,7 +76,7 @@ public class ColorSensor {
 		float fMax = fArrCalibValues[Define_WaffleState.iPosRed][0];										//  \
 		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {										//   \
 			if(fArrCalibValues[Define_WaffleState.iPosRed][i] < fMin) {										//    \
-				fMin = fArrCalibValues[Define_WaffleState.iPosRed][i];										//     Min und Max Wert fuer Rot Emmpty ermitteln
+				fMin = fArrCalibValues[Define_WaffleState.iPosRed][i];										//     Min und Max Wert fuer Rot Empty ermitteln
 			}																								//    /
 			if(fArrCalibValues[Define_WaffleState.iPosRed][i] > fMax) {										//   /
 				fMax = fArrCalibValues[Define_WaffleState.iPosRed][i];										//  /
