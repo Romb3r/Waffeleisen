@@ -35,7 +35,7 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 		
 		this.vZeigeTxt("oben -> manueller Betrieb");
 		this.vZeigeTxt("mitte -> Automatikbetrieb");
-		this.vZeigeTxt("unten -> Konfiguration");
+		this.vZeigeTxt("unten -> Kalibrierung");
 		
 		this.vSetMode();								// Funktionsaufruf um den Modus auszuwaehlen
 		
