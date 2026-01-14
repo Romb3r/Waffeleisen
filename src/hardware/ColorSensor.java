@@ -28,10 +28,10 @@ public class ColorSensor {
 	// Konstruktoren
 	public ColorSensor() {
 		this.rgb_colors = new float[sensor_mode.sampleSize()];
-		this.fEmptyMinMax = new float[3][10];
-		this.fNotReadyMinMax = new float[3][10];
-		this.fArrEmpty = new float[3][10];
-		this.fArrNotReady = new float[3][10];
+		this.fEmptyMinMax = new float[3][Define_WaffleState.iNumCalibSteps];
+		this.fNotReadyMinMax = new float[3][Define_WaffleState.iNumCalibSteps];
+		this.fArrEmpty = new float[3][Define_WaffleState.iNumCalibSteps];
+		this.fArrNotReady = new float[3][Define_WaffleState.iNumCalibSteps];
 		this.EndSwitchColor_sensor.setCurrentMode(this.EndSwitchColor_sensor.getColorIDMode().getName());
 		this.WaffelStateColor_sensor.setCurrentMode(this.WaffelStateColor_sensor.getRGBMode().getName());
 	}
@@ -64,7 +64,7 @@ public class ColorSensor {
 			fArrEmpty[Define_WaffleState.iPosRed][i] = this.red;
 			fArrEmpty[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrEmpty[Define_WaffleState.iPosBlue][i] = this.blue;
-			Delay.msDelay(50);
+			Delay.msDelay(10);
 		}
 		
 		// Min und Max Werte für die entsprechenden Farben kalkulieren und wegspeichern
@@ -115,7 +115,7 @@ public class ColorSensor {
 			fArrNotReady[Define_WaffleState.iPosRed][i] = this.red;
 			fArrNotReady[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrNotReady[Define_WaffleState.iPosBlue][i] = this.blue;
-			Delay.msDelay(50);
+			Delay.msDelay(10);
 		}
 		
 		// Min und Max Werte für die entsprechenden Farben kalkulieren und wegspeichern
