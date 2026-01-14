@@ -9,9 +9,6 @@ import lejos.hardware.Button;
 
 
 public class ManualMode extends Mode {
-	private Motor motor;
-	private BaseButton base_btn;
-	private ColorSensor color_sensor;
 	
 	// Konstruktoren
 	public ManualMode(Motor m, BaseButton bs, ColorSensor cs) {
@@ -22,7 +19,7 @@ public class ManualMode extends Mode {
 		this.sName = "Manueller Modus";
 	}
 	
-	// private Methoden
+	// oeffentliche Methoden
 	public void vRoutine() {
 	/*
 	 * Routinen Ablauf des Manuellen Modus
@@ -31,7 +28,7 @@ public class ManualMode extends Mode {
 		System.out.println("Hoch / Runter / Escape");
 		while(boRun) {
 			if(this.base_btn.boButtonPressed(Button.ID_UP)) {				// Öffne Waffeleisen wenn Taste OBEN gedrückt wurde
-				this.motor.vOpen();
+				this.motor.iOpen();
 				while (this.motor.getLeftMotor().isMoving() &&				// Solange beide Motoren drehen
 					   this.motor.getRightMotor().isMoving())
 				{		
@@ -42,7 +39,7 @@ public class ManualMode extends Mode {
 				}
 			}
 			if(this.base_btn.boButtonPressed(Button.ID_DOWN)) {				// Schließe Waffeleisen wenn Taste UNTEN gedrückt wurde
-				this.motor.vClose();
+				this.motor.iClose();
 				while (this.motor.getLeftMotor().isMoving() &&				// Solange beide Motoren drehen
 					   this.motor.getRightMotor().isMoving())
 				{

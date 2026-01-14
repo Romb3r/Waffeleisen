@@ -8,7 +8,7 @@ public class BaseButton {
 	 * Ließt die Tasten aus und überprüft, ob die gedrückte Taste der erwarteten entspricht. Liefert dann true oder false zurück
 	 */
 		int iPressedMask = Button.readButtons();
-		if (iPressedMask == iExpectedMask) {					// Vergleiche ob gedrückte Taste == erwartete Taste
+		if (iPressedMask == iExpectedMask) {							// Vergleiche ob gedrückte Taste == erwartete Taste
 			return true;
 		}
 		return false;
@@ -19,8 +19,8 @@ public class BaseButton {
 		 * Ließt die Tasten aus. Überprüft, ob die gedrückte Taste der erwarteten entspricht. Liefert dann true oder false zurück.
 		 * Die Funktion blockiert den weiteren Ablauf des Programms, bis eine Taste gedrückt wurde
 		 */
-		int iPressedMask = Button.waitForAnyPress();			// Diese Funktion blockiert bis eine Taste gedrückt wurde
-		if (iPressedMask == iExpectedMask) {					// Vergleiche ob gedrückte Taste == erwartete Taste
+		int iPressedMask = Button.waitForAnyPress();					// Diese Funktion blockiert bis eine Taste gedrückt wurde
+		if (iPressedMask == iExpectedMask) {							// Vergleiche ob gedrückte Taste == erwartete Taste
 			return true;
 		}
 		return false;

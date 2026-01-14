@@ -16,7 +16,7 @@ public class SystemInfoMenu extends LCD {				// Diese Klasse erbt von der LCD Kl
 	/*
 	 * Baut abhängig von der Spannung des EV3 einen Systeminfo String zusammen und speichert diesen in einem Attribut
 	 */
-		this.fVoltage = this.fGetVoltage();				// fülle fVoltage
+		this.fVoltage = this.fGetVoltage();															// initialisiere fVoltage
 	    if (this.fVoltage > 8.2)
 	    {
 	      	this.sSysPowerState = "Der Akku ist voll geladen --> " + this.fVoltage + "V";			// Wenn Spannung über 8.2 Volt
@@ -37,22 +37,22 @@ public class SystemInfoMenu extends LCD {				// Diese Klasse erbt von der LCD Kl
 	 * Standardkonstruktor SystemInfoMenu Klasse
 	 * Füllt private Attribute und ruft die Funktion auf um den Systeminfo String zu bauen
 	 */
-		this.ev3 = (EV3)BrickFinder.getDefault();		// fülle ev3 Objekt
-		this.CPower = ev3.getPower();					// fülle CPower Objekt
+		this.ev3 = (EV3)BrickFinder.getDefault();		// initialisiere ev3 Objekt
+		this.CPower = ev3.getPower();					// initialisiere CPower Objekt
 		this.vBuildPowerStateString();					// Baue Status String
 	}
 	
 	// öffentliche Methoden
 	public float fGetVoltage() {
 	/*
-	 * Gibt die aktuelle Spannung des EV3 zurück
+	 * Gibt die aktuelle Spannung des EV3 zurueck
 	 */
 		return this.CPower.getVoltage();
 	}
 	
 	public String sGetSysInfoString() {
 	/*
-	 * Gibt den Systeminfo String zurück
+	 * Gibt den Systeminfo String zurueck
 	 */
 		return this.sSysPowerState;
 	}

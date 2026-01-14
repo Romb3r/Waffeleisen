@@ -1,5 +1,6 @@
 package hardware;
 
+import defines.Define_Hardware;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -22,34 +23,38 @@ public class Motor {
 	}
 	
 	// oeffentliche Methoden
-	public void vOpen() {
+	public int iOpen() {
 	/*
 	 * Steuert den Motor so an, dass das Waffeleisen geoeffnet wird
+	 * Gibt integer ueber den Status der Motoren zurueck
 	 */
-		CMotorLeft.forward();
-		CMotorRight.forward();
+		CMotorLeft.forward();																						// Linker Motor vorwaerts
+		CMotorRight.forward();																						// Rechter Motor vorwaerts
+		return Define_Hardware.iMotorOpen;
 	}
 	
-	public void vClose() {
+	public int iClose() {
 	/*
 	 * Steuert den Motor so an, dass das Waffeleisen geschlossen wird 
+	 * Gibt integer ueber den Status der Motoren zurueck
 	 */
-		CMotorLeft.backward();
-		CMotorRight.backward();
+		CMotorLeft.backward();																						// Linker Motor rueckwaerts
+		CMotorRight.backward();																						// Rechter Motor rueckwarts
+		return Define_Hardware.iMotorClosed;
 	}
 	
-	public void vSensorIn() {
+	public void vSensorIn(int iAngle) {
 	/*
 	 * Sensor faehrt ins Werkzeug ein, zum WaffelStateCheck
 	 */
-		CMotorState.rotate(-1*130);
+		CMotorState.rotate(iAngle);																					// Fahre Sensor in das Waffeleisen
 	}
 	
-	public void vSensorOut() {
+	public void vSensorOut(int iAngle) {
 	/*
 	 * Sensor faehrt aus dem Werkzeug heraus, auf Grundstellung
 	 */
-		CMotorState.rotate(130);
+		CMotorState.rotate(-1*iAngle);																				// Fahre Sensor wieder aus dem Waffeleisen raus
 	}
 	
 	public EV3LargeRegulatedMotor getLeftMotor() {

@@ -4,8 +4,8 @@ import lejos.hardware.Button;
 
 public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	// private Attribute
-	private int iMode;									// integer zur Modus Speicherung (1 = manuell / 2 = auto)
-	private boolean boExitProgramm;
+	private int iMode;									// integer zur Modus Speicherung (1 = manuell / 2 = auto / 4 = kalibrierung)
+	private boolean boExitProgramm;						// Abbruchbedingung fuer main Schleife in Main.java
 	
 	// private Methoden
 	private void vSetMode() {
@@ -29,53 +29,41 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	 * Erwartet dann einen Tastendruck um den Modus auszuwaehlen.
 	 * Zeigt an welcher Modus gewaehlt wurde.
 	 */
-		this.vZeigeTxt("Bitte waehlen Sie einen Modus auf den Pfeiltasten.");					
-		// wegen langem Text, scroll-Moeglichkeit waere hier optimal
-		Button.waitForAnyPress();
-		
+		this.vZeigeTxt("Modusauswahl:");					
 		this.vZeigeTxt("oben -> manueller Betrieb");
 		this.vZeigeTxt("mitte -> Automatikbetrieb");
-		this.vZeigeTxt("unten -> Konfiguration");
+		this.vZeigeTxt("unten -> Kalibrierung");
 		
-		this.vSetMode();								// Funktionsaufruf um den Modus auszuwaehlen
+		this.vSetMode();												// Funktionsaufruf um den Modus auszuwaehlen
 		
-		switch(this.iMode)
-        {
-	        case 0: 
-	        	this.vZeigeTxt("Taste 0");
-	        	//Modus = 0; // - noch keine Verwendung
+		switch(this.iMode)												// Switch zur Informationsausgabe auf dem Display
+        {	
+	        case Button.ID_UP: 
+	        	this.vZeigeTxt("Taste: Pfeil oben"); 					
+	        	this.vZeigeTxt("Modus Manuell gewaehlt!"); 				// - manueller Betrieb = Motor kann spaeter ueber Tasten angesteuert werden
 	        	break;
 	        		
-	        case 1: 
-	        	this.vZeigeTxt("Taste: Pfeil oben"); 	// --> Pfeil oben
-	        	this.vZeigeTxt("Modus manueller Betrieb gewaehlt!"); 	// - manueller Betrieb = Motor kann spaeter ueber Tasten angesteuert werden
+	        case Button.ID_ENTER: 
+	        	this.vZeigeTxt("Taste: Mitte "); 						// --> mittelere Taste
+	        	this.vZeigeTxt("Modus Automatik gewaehlt!"); 			// - Automatikbetrieb = mach eine Waffel...
 	        	break;
 	        		
-	        case 2: 
-	        	this.vZeigeTxt("Taste: Mitte "); 	// --> mittelere Taste
-	        	this.vZeigeTxt("Modus Automatik gewaehlt!"); 	// - Automatikbetrieb = mach eine Waffel...
-	        	break;
-	        		
-	        case Button.ID_ESCAPE: 
-	        	this.vZeigeTxt("Programm beenden... ");
-	        	this.boExitProgramm = true;
+	        case Button.ID_ESCAPE: 							
+	        	this.vZeigeTxt("Programm beenden... ");					// --> Escaoe Taste
+	        	this.boExitProgramm = true;								// Breche das Hauptprogramm ab
 	        	//Modus = 3; // - noch keine Verwendung
 	        	break;
 	        		
-	        case 4: 
-	        	this.vZeigeTxt("Taste: Pfeil unten"); 	// --> Pfeil unten
-	        	this.vZeigeTxt("Modus Konfiguration gewaehlt!"); 	// - Konfiguration koennte sowas wie ein "Probe"-Waffel sein. vllt stoppen wir die Zeit & man kann seinen Braeunungsgrad speichern.. 
-	        	break;
-	        		
-	        case 5: 
-	        	this.vZeigeTxt("Taste 5");
+	        case Button.ID_DOWN: 
+	        	this.vZeigeTxt("Taste: Pfeil unten"); 					
+	        	this.vZeigeTxt("Modus Kalibrierung gewaehlt!"); 		// - Kalibrierung = Kalibiere Farbsensor um zwischen leeren Waffeleisen und rohem Teig zu unterscheiden 
 	        	break;
 	        		
 	        default: 
-	        	this.vZeigeTxt("Unbekannte Taste");		// --> Pfeil rechts, Pfeil links und oben links 
+	        	this.vZeigeTxt("Unbekannte Taste");
 	        	break;
         }
-		Button.waitForAnyPress();	// damit Text nicht vorzeitig verschwindet
+		Button.waitForAnyPress();										// damit Text nicht vorzeitig verschwindet
 	}
 	
 	public boolean boGetExitProgramm() {
