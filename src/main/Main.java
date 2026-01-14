@@ -13,6 +13,7 @@ import hardware.Motor;
 import hardware.Speaker;
 import modes.AutoMode;
 import modes.ManualMode;
+import modes.CalibrationMode;
 
 
 public class Main {
@@ -35,6 +36,10 @@ public class Main {
 			else if(iModus == Define_Mode.iManualMode) {									//   /
 				ManualMode CManualMode = new ManualMode(motor, base_btn, color_sensor);		//  /
 				CManualMode.vRoutine();														// /
+			}
+			else if(iModus == Define_Mode.iCalibMode) {
+				CalibrationMode CCalibMode = new CalibrationMode(color_sensor, motor, base_btn);
+				CCalibMode.vRoutine();
 			}
 		}
 	}

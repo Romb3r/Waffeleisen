@@ -62,9 +62,9 @@ public class ModeMenu extends LCD {						// diese Klasse erbt von der Klasse LCD
 	        	//Modus = 3; // - noch keine Verwendung
 	        	break;
 	        		
-	        case 4: 
+	        case Button.ID_DOWN: 
 	        	this.vZeigeTxt("Taste: Pfeil unten"); 	// --> Pfeil unten
-	        	this.vZeigeTxt("Modus Konfiguration gewaehlt!"); 	// - Konfiguration koennte sowas wie ein "Probe"-Waffel sein. vllt stoppen wir die Zeit & man kann seinen Braeunungsgrad speichern.. 
+	        	this.vZeigeTxt("Modus Kalibrierung gewaehlt!"); 	// - Kalibrierung = Kalibiere Farbsensor um zwischen leeren Waffeleisen und rohem Teig zu unterscheiden 
 	        	break;
 	        		
 	        case 5: 

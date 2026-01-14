@@ -10,3 +10,5 @@ public class Mode {
 	protected int iID;					// ID des Modus
 	protected String sName;				// Name des Modus
 }
+
+
