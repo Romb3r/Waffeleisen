@@ -59,17 +59,17 @@ public class ColorSensor {
 		return false;
 	}
 	
-	public void vCalibEmpty() {
+	public void vCalibEmpty(Motor motor) {
 		// Messungen machen
 		int iRotationAngle = 187;
 		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			this.CColorSensorMotor.vSensorIn(iRotationAngle);
+			motor.vSensorIn(iRotationAngle);
 			this.vFetchSampleWaffleState();
 			fArrEmpty[Define_WaffleState.iPosRed][i] = this.red;
 			fArrEmpty[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrEmpty[Define_WaffleState.iPosBlue][i] = this.blue;
 			Delay.msDelay(1500);
-			this.CColorSensorMotor.vSensorOut(iRotationAngle);
+			motor.vSensorOut(iRotationAngle);
 			iRotationAngle = iRotationAngle + 3;
 		}
 		
@@ -114,17 +114,17 @@ public class ColorSensor {
 		this.fEmptyMinMax[Define_WaffleState.iPosBlue][Define_WaffleState.iPosMin] = fMin;	
 	}
 	
-	public void vCalibNotReady() {
+	public void vCalibNotReady(Motor motor) {
 		// Messungen machen
 		int iRotationAngle = 187;
 		for(int i = 0; i < Define_WaffleState.iNumCalibSteps; i++) {
-			this.CColorSensorMotor.vSensorIn(iRotationAngle);
+			motor.vSensorIn(iRotationAngle);
 			this.vFetchSampleWaffleState();
 			fArrNotReady[Define_WaffleState.iPosRed][i] = this.red;
 			fArrNotReady[Define_WaffleState.iPosGreen][i] = this.green;
 			fArrNotReady[Define_WaffleState.iPosBlue][i] = this.blue;
 			Delay.msDelay(1500);
-			this.CColorSensorMotor.vSensorIn(iRotationAngle);
+			motor.vSensorIn(iRotationAngle);
 			iRotationAngle = iRotationAngle + 3;
 		}
 		
